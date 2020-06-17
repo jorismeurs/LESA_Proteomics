@@ -1,7 +1,7 @@
 classdef LESAProteomics < visualise & identify
     
     properties (Constant = true)
-        version = '0.0.6';
+        version = '0.0.7';
         developer = 'Joris Meurs, MSc';
     end
     
@@ -15,10 +15,13 @@ classdef LESAProteomics < visualise & identify
     
     methods
         function obj = LESAProteomics()
-            source = fileparts(which('LESA_Proteomics'));           
+            source = cd;           
             addpath(source);
-            obj.mainFolder = fullfile(source, 'LESAProteomics');
+            obj.mainFolder = fullfile(source,'LESAProteomics');
             addpath(obj.mainFolder);
+            
+            obj.output.MS1Data = [];
+            obj.output.MS2Data = [];
         end
     end
     
