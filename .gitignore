@@ -204,3 +204,16 @@ LESAProteomics/identification/SearchGUI-3.3.20/resources/Andromeda/windows/temp/
 LESAProteomics/identification/SearchGUI-3.3.20/resources/Andromeda/windows/temp/tutorial new test.apar
 LESAProteomics/identification/SearchGUI-3.3.20/resources/Andromeda/windows/temp/a225672418/peptides.ind
 LESAProteomics/identification/SearchGUI-3.3.20/resources/Andromeda/windows/Andromeda.exe.config
+*.html
+*.zip
+*.omx
+*.mzid
+*.psq
+*.pin
+*.phr
+*.cseq
+*.csarr
+*.cnlcp
+*.canno
+*.cpsx
+*.cui

@@ -95,7 +95,7 @@ classdef identify
                 else
                     obj.settings.MSGF.use = '0';
                 end
-                searchEngines = [' -xtandem ' obj.settings.xtandem.use ' -ommsa ' obj.settings.OMSSA.use ' -msgf ' obj.settings.MSGF.use];
+                searchEngines = [' -xtandem ' obj.settings.xtandem.use ' -omssa ' obj.settings.OMSSA.use ' -msgf ' obj.settings.MSGF.use];
             end
                         
             outputFolder = [obj.folder.identification '\SearchResults'];
@@ -106,7 +106,7 @@ classdef identify
             searchGUI_jar = jar_struct.name;
 
             system(['cd ' searchGUILocation],'-echo');
-            system(['java -cp ' searchGUI_jar ' eu.isas.searchgui.cmd.SearchCLI -spectrum_files ' inputFolder ' -output_folder ' outputFolder ' -id_params ' paramLoc searchEngines ' -output_option 1']);
+            system(['java -cp ' searchGUI_jar ' eu.isas.searchgui.cmd.SearchCLI -spectrum_files ' inputFolder ' -output_folder ' outputFolder ' -id_params ' obj.settings.parameterFileName searchEngines ' -output_option 1']);
             
             cd(obj.folder.mainFolder);
         end
@@ -130,6 +130,35 @@ classdef identify
             system(['cd ' peptideShakerLocation],'-echo');
             system(['java -Xms1024m -Xmx1024m -cp ' peptideShaker_jar ' eu.isas.peptideshaker.cmd.PeptideShakerCLI -experiment A_ -sample B_ -replicate 1 -identification_files ' identificationFiles ' -spectrum_files ' spectrumFiles ' -out ' fullfile(obj.folder.identification,outputLabel)]);
             obj.output.PeptideShaker = fullfile(obj.folder.identification,outputLabel);
+            
+            cd(obj.folder.mainFolder);
+        end
+        
+        function obj = generateReport(obj)
+            clc
+
+            % Execute ReportCLI
+            cd(obj.folder.identification);
+            try
+                cpsx_struct = dir('*.cpsx');
+                cpsxLocation = fullfile(cpsx_struct.folder,cpsx_struct.name);
+            catch
+                cd(obj.folder.mainFolder);
+                error(sprintf('No .cpsx file found in %s',obj.folder.identification)); 
+            end
+            
+            peptideShakerLocation = [obj.folder.identification '\PeptideShaker-' obj.settings.PeptideShakerVersion];
+            try
+                cd(peptideShakerLocation);
+                jar_struct = dir('*.jar'); 
+                peptideShaker_jar = jar_struct.name;
+            catch
+                error('PeptideShaker .jar file not found'); 
+            end
+
+            cd(peptideShakerLocation);
+            system(['cd ' peptideShakerLocation],'-echo');
+            system(['java -Xms1024m -Xmx1024m -cp ' peptideShaker_jar ' eu.isas.peptideshaker.cmd.ReportCLI -in ' cpsxLocation ' -out_reports ' obj.folder.identification ' -reports 11']); 
             
             cd(obj.folder.mainFolder);
         end
