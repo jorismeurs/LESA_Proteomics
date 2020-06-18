@@ -217,3 +217,9 @@ LESAProteomics/identification/SearchGUI-3.3.20/resources/Andromeda/windows/Andro
 *.canno
 *.cpsx
 *.cui
+*.dat
+LESAProteomics/identification/PeptideShaker-1.16.45/resources/matches/experiment
+LESAProteomics/identification/PeptideShaker-1.16.45/resources/matches/A__B__1_id/service.properties
+LESAProteomics/identification/PeptideShaker-1.16.45/resources/matches/A__B__1_id/log/logmirror.ctrl
+LESAProteomics/identification/PeptideShaker-1.16.45/resources/matches/A__B__1_id/log/log.ctrl
+LESAProteomics/identification/PeptideShaker-1.16.45/resources/matches/A__B__1_id/db.lck

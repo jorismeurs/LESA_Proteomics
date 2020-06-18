@@ -68,7 +68,7 @@ classdef identify
             end
             
             try
-                searchEngines = [' -xtandem ' obj.settings.xtandem.use ' -ommsa ' obj.settings.OMSSA.use ' -msgf ' obj.settings.MSGF.use];    
+                searchEngines = [' -xtandem ' obj.settings.xtandem.use ' -omssa ' obj.settings.OMSSA.use ' -msgf ' obj.settings.MSGF.use];    
             catch
                 options = {
                     'xtandem'
@@ -158,7 +158,7 @@ classdef identify
 
             cd(peptideShakerLocation);
             system(['cd ' peptideShakerLocation],'-echo');
-            system(['java -Xms1024m -Xmx1024m -cp ' peptideShaker_jar ' eu.isas.peptideshaker.cmd.ReportCLI -in ' cpsxLocation ' -out_reports ' obj.folder.identification ' -reports 11']); 
+            system(['java -Xms1024m -Xmx1024m -cp ' peptideShaker_jar ' eu.isas.peptideshaker.cmd.ReportCLI -in ' cpsxLocation ' -out_reports ' obj.folder.identification ' -reports ' obj.settings.reportNumber]); 
             
             cd(obj.folder.mainFolder);
         end
