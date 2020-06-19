@@ -45,6 +45,8 @@ classdef annotate
            
            
            % Annotate fragment ions
+           obj.output.peptideSequence = char(peptideSequence(scanIndex));
+           obj.output.peptideCharge = char(precursorCharge(scanIndex));
            [yseries,bseries] = fragmentSequence(char(peptideSequence(scanIndex)));
            obj.output.yIons = yseries;
            obj.output.bIons = bseries;
@@ -54,7 +56,7 @@ classdef annotate
            MGFScans = {obj.output.MGFStruct.scan.scanName}';
            MGFIndex = find(strcmp(scanName,MGFScans));
            scanData = obj.output.MGFStruct.scan(MGFIndex).scanData;
-           obj = plotMS2Data(obj,scanData)
+           obj = plotMS2Data(obj,scanData);
            
         end
     end

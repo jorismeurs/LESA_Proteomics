@@ -6,6 +6,7 @@ set(gcf,'Color','white');
 set(gca,'FontName','Calibri');
 xlabel('\it{m/z}','interpreter','tex');
 ylabel('Intensity');
+title([obj.output.peptideSequence ' ' obj.output.peptideCharge])
 
 YIons = [obj.output.yIons.mz];
 YColor = [202/255,0/255,32/255];
@@ -74,4 +75,4 @@ for j = 1:length(BIons)
     end
 end
 hold off
-set(gcf,'Position',[100,100,1000,600]);
+set(gcf,'Position',[50,50,1300,600]);
