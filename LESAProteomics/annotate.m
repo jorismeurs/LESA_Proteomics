@@ -51,7 +51,9 @@ classdef annotate
            MGFIndex = find(strcmp(scanName,MGFScans));
            scanData = obj.output.MGFStruct.scan(MGFIndex).scanData;
            obj = plotMS2Data(obj,scanData);
-           
+           cd(obj.folder.export);
+           saveas(gcf,'');
+           cd(obj.folder.mainFolder);
         end
     end
     
