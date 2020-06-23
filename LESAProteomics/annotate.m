@@ -14,45 +14,39 @@ classdef annotate
            % Read report data
            reportData = readReport(obj);
             
-           % Select .MGF from list
-           spectrumFiles = unique(reportData(2:end,5));
-           [idx,v] = listdlg('PromptString','Select a spectrum file:',...
-               'SelectionMode','single',...
-               'ListString',spectrumFiles);
-           if v == 0
-              return 
+           % Select PSM from list
+           sequenceList = reportData(2:end,3);
+           proteinList = reportData(2:end,2);
+           mgfList = reportData(2:end,10);
+           scanList = reportData(2:end,11);
+           clc
+           for j = 1:length(proteinList)
+               fprintf('(%d) %s | %s \n',j,proteinList{j},sequenceList{j});
            end
-           selectedFile = spectrumFiles{idx};
-           mgfLocation = fullfile(obj.folder.identification,'data',selectedFile);
+           PSMindex = input('Select PSM for annotation:     ');
+           mgfLocation = fullfile(obj.folder.identification,'data',mgfList{PSMindex});
            
            % Read .MGF
            obj.output.MGFStruct = readMGF(mgfLocation); 
            obj.output.reportData = reportData;
+           obj.output.scanIndex = PSMindex;
         end
         
         function obj = annotateMS2(obj)
            
-           peptideScans = obj.output.reportData(2:end,6);
-           peptideAnnotations = obj.output.reportData(2:end,17);
-           precursorCharge = obj.output.reportData(2:end,14);
-           peptideSequence = obj.output.reportData(2:end,4);
-
-           clc
-           for j = 1:length(peptideScans)
-              fprintf('(%d) %s | %s \n',j,peptideScans{j},peptideSequence{j}); 
-           end
-           scanIndex = input('Select index for scan of interest: ');
-           
-           
+           peptideScans = obj.output.reportData(2:end,11);
+           precursorCharge = obj.output.reportData(2:end,15);
+           peptideSequence = obj.output.reportData(2:end,3);
+          
            % Annotate fragment ions
-           obj.output.peptideSequence = char(peptideSequence(scanIndex));
-           obj.output.peptideCharge = char(precursorCharge(scanIndex));
-           [yseries,bseries] = fragmentSequence(char(peptideSequence(scanIndex)));
+           obj.output.peptideSequence = char(peptideSequence(obj.output.scanIndex));
+           obj.output.peptideCharge = char(precursorCharge(obj.output.scanIndex));
+           [yseries,bseries] = fragmentSequence(char(peptideSequence(obj.output.scanIndex)));
            obj.output.yIons = yseries;
            obj.output.bIons = bseries;
            
            % Make graph
-           scanName = peptideScans{scanIndex,1};
+           scanName = peptideScans{obj.output.scanIndex,1};
            MGFScans = {obj.output.MGFStruct.scan.scanName}';
            MGFIndex = find(strcmp(scanName,MGFScans));
            scanData = obj.output.MGFStruct.scan(MGFIndex).scanData;

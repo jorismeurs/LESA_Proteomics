@@ -1,7 +1,7 @@
 function reportData = readReport(obj)
 
-fileID = fopen([obj.folder.identification '\A__B__1_Fragment_ions.txt'],'r');
-fileData = textscan(fileID,repmat('%s',1,18),'delimiter','\t','EmptyValue',Inf);
+fileID = fopen([obj.folder.identification '\A__B__1_Extended_PSM_Report.txt'],'r');
+fileData = textscan(fileID,repmat('%s',1,25),'delimiter','\t','EmptyValue',Inf);
 fclose(fileID);
 fclose('all');
 

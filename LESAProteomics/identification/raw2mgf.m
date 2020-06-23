@@ -8,6 +8,11 @@ if isequal(FileName,0)
 end
 
 fileLoc = fullfile(PathName,FileName);
+% spaceIDX = find(fileLoc==' ');
+% if ~isempty(spaceIDX)
+%    error('File path contains spaces'); 
+% end
+
 if iscell(fileLoc)
     fileExtLoc = find(FileName{1}=='.');
     fileExt = FileName{1}(fileExtLoc+1:end);
@@ -20,13 +25,7 @@ end
 clc
 idx = [];
 if iscell(fileLoc)
-    for j = 1:length(fileLoc)
-        fileInfo = dir(fileLoc{j});
-        fileSize = fileInfo.bytes/1024;
-        if fileSize > 5000
-           idx = [idx;j]; 
-        end
-    end
+    idx = 1:1:length(fileLoc); 
 else
     idx = 1; 
 end
@@ -34,7 +33,7 @@ end
 if isequal(fileExt,'raw')
     for j = 1:length(idx)
         system('cd C:\ProteoWizard\');
-        system(['msconvert ' fileLoc{idx(j)} ' --mgf --32 --filter "peakPicking true" -o ' [obj.folder.identification '/data']]);
+        system(['msconvert "' fileLoc{idx(j)} '" --mgf --32 --filter "peakPicking true" -o ' [obj.folder.identification '/data']]);
     end
     fileIDX = idx;
     disp('File conversion finished...');

@@ -22,15 +22,17 @@ classdef LESAProteomics < visualise & identify & annotate & quantify
             obj.folder.identification = fullfile(obj.folder.mainFolder,'identification');
             obj.folder.annotation = fullfile(obj.folder.mainFolder,'annotation');
             obj.folder.quantification = fullfile(obj.folder.mainFolder,'quantification');
+            obj.folder.export = fullfile(obj.folder.mainFolder,'images');
             addpath(obj.folder.identification);
             addpath(obj.folder.annotation);
             addpath(obj.folder.quantification);
+            addpath(obj.folder.export);
             
             obj.output.MS1Data = [];
             obj.output.MS2Data = [];
             obj.settings.PeptideShakerVersion = '1.16.45';
             obj.settings.SearchGUIVersion = '3.3.20';
-            obj.settings.reportNumber = '13';
+            obj.settings.reportNumber = '11';
             
             obj.settings.MS1Tolerance = [];
             obj.settings.MS2Tolerance = [];

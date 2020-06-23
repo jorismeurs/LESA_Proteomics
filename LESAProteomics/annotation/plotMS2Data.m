@@ -1,9 +1,10 @@
 function obj = plotMS2Data(obj,scanData)
 
 stem(scanData(:,1),scanData(:,2),'Color',repmat(0.7,1,3),'Marker','none');
-xlim([100 1500]);
+xlim([min(scanData(:,1))-10 max(scanData(:,1))+10]);
+ylim([0 max(scanData(:,2))+0.1*max(scanData(:,2))]);
 set(gcf,'Color','white');
-set(gca,'FontName','Calibri');
+set(gca,'FontName','Calibri','FontSize',14);
 xlabel('\it{m/z}','interpreter','tex');
 ylabel('Intensity');
 title([obj.output.peptideSequence ' ' obj.output.peptideCharge])
@@ -18,7 +19,7 @@ for j = 1:length(YIons)
        if numel(matchIon) > 1
           diff = YIons(j)-scanData(matchIon,1);
           min_diff = find(diff==min(diff));
-          offset = 0.1*scanData(matchIon(min_diff),2);
+          offset = 20;
           stem(scanData(matchIon(min_diff),1),scanData(matchIon(min_diff),2),...
               'Color',YColor,'Marker','none');
           text(scanData(matchIon(min_diff),1),scanData(matchIon(min_diff),2)+offset,...
@@ -28,7 +29,7 @@ for j = 1:length(YIons)
               'FontWeight','bold',...
               'FontAngle','italic');
        else
-           offset = 0.1*scanData(matchIon,2);
+          offset = 20; 
           stem(scanData(matchIon,1),scanData(matchIon,2),...
               'Color',YColor,'Marker','none');
           text(scanData(matchIon,1),scanData(matchIon,2)+offset,...
