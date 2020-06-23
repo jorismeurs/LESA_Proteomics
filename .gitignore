@@ -223,3 +223,4 @@ LESAProteomics/identification/PeptideShaker-1.16.45/resources/matches/A__B__1_id
 LESAProteomics/identification/PeptideShaker-1.16.45/resources/matches/A__B__1_id/log/logmirror.ctrl
 LESAProteomics/identification/PeptideShaker-1.16.45/resources/matches/A__B__1_id/log/log.ctrl
 LESAProteomics/identification/PeptideShaker-1.16.45/resources/matches/A__B__1_id/db.lck
+*.mzXML

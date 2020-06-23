@@ -10,6 +10,41 @@ classdef annotate
            obj.settings.MS2Tolerance = input('MS2 tolerance (Da): ');
         end
         
+        function obj = selectMS1(obj)
+            clc
+            reportData = readReport(obj);
+            obj.output.reportData = reportData;
+            mzList = reportData(2:end,14);
+            proteinList = reportData(2:end,2);
+                        
+            % Select file
+            fileList = unique(reportData(2:end,10));
+            allFiles = reportData(2:end,10);
+            for j = 1:length(fileList)
+                fprintf('(%d) %s \n',j,fileList{j});
+            end
+            fileIndex = input('Choose file for annotation:  ');
+            mzIndex = find(strcmp(allFiles,fileList{fileIndex}));
+            obj.output.mzList = mzList(mzIndex,1);
+            obj.output.proteinList = proteinList(mzIndex,1);
+            raw2mzxml(obj);
+            fileName = fileList{fileIndex};
+            extensionIndex = find(fileName=='.');
+            obj.output.MS1File = fileName(1:extensionIndex-1);
+            obj.output.mzXMLFile = [obj.folder.identification '\data\' fileName(1:extensionIndex-1) '.mzXML'];
+            scanPeakList = mzxml2peaks(mzxmlread(obj.output.mzXMLFile));
+            bpIntensity = cellfun(@(x) max(x(:,2)),scanPeakList);
+            maxIndex = find(bpIntensity==max(bpIntensity));  
+            obj.output.scanData = cell2mat(scanPeakList(maxIndex,1));
+        end
+        
+        function obj = annotateMS1(obj)           
+            plotMS1Data(obj);
+            cd(obj.folder.export);
+            saveas(gcf,[obj.output.MS1File obj.settings.imageFormat]);
+            cd(obj.folder.mainFolder);
+        end
+        
         function obj = annotateMS2(obj)
            % Read report data
            reportData = readReport(obj);
