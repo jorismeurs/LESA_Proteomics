@@ -17,7 +17,7 @@ classdef identify
                 'general',[]);
 
             clc
-            cd([obj.folder.identification '/-' obj.settings.SearchGUIVersion])
+            cd([obj.folder.identification '/SearchGUI-' obj.settings.SearchGUIVersion])
             settings.parameterFileName = input('Provide file name:   ','s');
 
             settings.general = setGeneralParameters();
