@@ -1,7 +1,7 @@
 classdef LESAProteomics < visualise & identify & annotate & quantify
     
     properties (Constant = true)
-        version = '0.3.2';
+        version = '0.3.3';
         developer = 'Joris Meurs, MSc';
     end
     
@@ -11,6 +11,7 @@ classdef LESAProteomics < visualise & identify & annotate & quantify
         options
         output
         settings
+        parameters
     end
     
     methods
@@ -34,6 +35,8 @@ classdef LESAProteomics < visualise & identify & annotate & quantify
             obj.settings.MS1Tolerance = [];
             obj.settings.MS2Tolerance = [];
             obj.settings.peakThreshold = 1e4;
+            
+            obj.folder.searchFolder = [obj.folder.identification '/SearchGUI-' obj.settings.SearchGUIVersion];
         end
     end
     

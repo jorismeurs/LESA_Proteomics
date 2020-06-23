@@ -10,17 +10,12 @@ classdef identify
             % .../identification/SearchGUI-VERSION
 
             % Initiate structure
-            settings = struct('parameterFileName',[],...
-                'xtandem',[],...
-                'OMSSA',[],...
-                'MSGF',[],...
-                'general',[]);
-
             clc
-            cd([obj.folder.identification '/SearchGUI-' obj.settings.SearchGUIVersion])
-            settings.parameterFileName = input('Provide file name:   ','s');
+            obj.folder.searchFolder = [obj.folder.identification '/SearchGUI-' obj.settings.SearchGUIVersion];
+            cd(obj.folder.searchFolder);
+            obj.parameters.parameterFileName = input('Provide file name:   ','s');
 
-            settings.general = setGeneralParameters();
+            obj = setGeneralParameters(obj);
             clc
 
             algorithms = {
@@ -32,20 +27,19 @@ classdef identify
                 fprintf('(%d) %s \n',j,algorithms{j});
             end
             selectSearchAlgorithms = input('Select search algorithms:   ','s');
-            settings.xtandem.use = '0';
-            settings.OMSSA.use = '0';
-            settings.MSGF.use = '0';
+            obj.parameters.xtandem.use = '0';
+            obj.parameters.OMSSA.use = '0';
+            obj.parameters.MSGF.use = '0';
 
             if contains(selectSearchAlgorithms,'1')
-                settings.xtandem = setXTANDEM();
+                obj.parameters.xtandem = setXTANDEM();
             elseif contains(selectSearchAlgorithms,'2')
-                settings.OMSSA = setOMSSA();
+                obj.parameters.OMSSA = setOMSSA();
             elseif contains(selectSearchAlgorithms,'3')
-                settings.MSGF = setMSGF();
+                obj.parameters.MSGF = setMSGF();
             end
-            obj.settings = settings;
 
-            obj = generateFile(settings,obj);
+            generateFile(obj);
 
         end
         
