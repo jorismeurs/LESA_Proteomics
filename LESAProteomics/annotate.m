@@ -10,7 +10,7 @@ classdef annotate
            obj.settings.MS2Tolerance = input('MS2 tolerance (Da): ');
         end
         
-        function obj = importMGF(obj)
+        function obj = annotateMS2(obj)
            % Read report data
            reportData = readReport(obj);
             
@@ -30,9 +30,6 @@ classdef annotate
            obj.output.MGFStruct = readMGF(mgfLocation); 
            obj.output.reportData = reportData;
            obj.output.scanIndex = PSMindex;
-        end
-        
-        function obj = annotateMS2(obj)
            
            peptideScans = obj.output.reportData(2:end,11);
            precursorCharge = obj.output.reportData(2:end,15);
@@ -52,7 +49,7 @@ classdef annotate
            scanData = obj.output.MGFStruct.scan(MGFIndex).scanData;
            obj = plotMS2Data(obj,scanData);
            cd(obj.folder.export);
-           saveas(gcf,'');
+           saveas(gcf,[obj.output.peptideSequence obj.settings.imageFormat]);
            cd(obj.folder.mainFolder);
         end
     end
