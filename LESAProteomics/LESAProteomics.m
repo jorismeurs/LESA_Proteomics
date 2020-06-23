@@ -1,7 +1,7 @@
 classdef LESAProteomics < visualise & identify & annotate & quantify
     
     properties (Constant = true)
-        version = '0.4.0';
+        version = '0.4.1';
         developer = 'Joris Meurs, MSc';
     end
     
