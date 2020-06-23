@@ -8,39 +8,50 @@ classdef identify
             % Generating a .par file to be used in SearchGUI
             % Files can also be generated in the SearchGUI interface and copied to
             % .../identification/SearchGUI-VERSION
-
-            % Initiate structure
-            clc
-            obj.folder.searchFolder = [obj.folder.identification '/SearchGUI-' obj.settings.SearchGUIVersion];
-            cd(obj.folder.searchFolder);
-            obj.parameters.parameterFileName = input('Provide file name:   ','s');
-
-            obj = setGeneralParameters(obj);
-            clc
-
-            algorithms = {
-                'X!Tandem'
-                'OMSSA'
-                'MSGF+'
-                };
-            for j = 1:length(algorithms)
-                fprintf('(%d) %s \n',j,algorithms{j});
+            if ~isempty(obj.parameters) 
+                executeFileGeneration = questdlg(...
+                    'Use current input as parameters?',...
+                    'Generate parameter file',...
+                    'Yes','No','Yes');
+            else
+                executeFileGeneration = 'Yes';
             end
-            selectSearchAlgorithms = input('Select search algorithms:   ','s');
-            obj.parameters.xtandem.use = '0';
-            obj.parameters.OMSSA.use = '0';
-            obj.parameters.MSGF.use = '0';
+            
+            switch executeFileGeneration
+                case 'No'
+                    clc
+                    obj.folder.searchFolder = [obj.folder.identification '/SearchGUI-' obj.settings.SearchGUIVersion];
+                    cd(obj.folder.searchFolder);
+                    obj.parameters.parameterFileName = input('Provide file name:   ','s');
 
-            if contains(selectSearchAlgorithms,'1')
-                obj.parameters.xtandem = setXTANDEM();
-            elseif contains(selectSearchAlgorithms,'2')
-                obj.parameters.OMSSA = setOMSSA();
-            elseif contains(selectSearchAlgorithms,'3')
-                obj.parameters.MSGF = setMSGF();
+                    obj = setGeneralParameters(obj);
+                    clc
+
+                    algorithms = {
+                        'X!Tandem'
+                        'OMSSA'
+                        'MSGF+'
+                        };
+                    for j = 1:length(algorithms)
+                        fprintf('(%d) %s \n',j,algorithms{j});
+                    end
+                    selectSearchAlgorithms = input('Select search algorithms:   ','s');
+                    obj.parameters.xtandem.use = '0';
+                    obj.parameters.OMSSA.use = '0';
+                    obj.parameters.MSGF.use = '0';
+
+                    if contains(selectSearchAlgorithms,'1')
+                        obj.parameters.xtandem = setXTANDEM();
+                    elseif contains(selectSearchAlgorithms,'2')
+                        obj.parameters.OMSSA = setOMSSA();
+                    elseif contains(selectSearchAlgorithms,'3')
+                        obj.parameters.MSGF = setMSGF();
+                    end
+
+                    generateFile(obj);
+                case 'Yes'
+                    generateFile(obj);
             end
-
-            generateFile(obj);
-
         end
         
         function obj = runSearch(obj)
