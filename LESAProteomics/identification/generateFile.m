@@ -1,6 +1,6 @@
 function obj = generateFile(settings,obj)
     clc
-    searchFolder = [obj.mainFolder '\identification\SearchGUI-3.3.20'];
+    searchFolder = [obj.folder.mainFolder '\identification\SearchGUI-' obj.settings.SearchGUIVersion];
     cd(searchFolder);
     jar_struct = dir('*.jar'); 
     searchGUI_jar = jar_struct.name;
@@ -30,5 +30,5 @@ function obj = generateFile(settings,obj)
         ' -msgf_max_pep_length ' settings.general.maxPeptideLength,...
         ' -omssa_min_pep_length ' settings.general.minPeptideLength,...
         ' -omssa_max_pep_length ' settings.general.maxPeptideLength]);
-    cd(obj.mainFolder);
+    cd(obj.folder.mainFolder);
 end
