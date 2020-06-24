@@ -33,7 +33,7 @@ end
 if isequal(fileExt,'raw')
     for j = 1:length(idx)
         system('cd C:\ProteoWizard\');
-        system(['msconvert "' fileLoc{idx(j)} '" --mgf --32 --filter "peakPicking true" -o ' [obj.folder.identification '/data']]);
+        system(['msconvert "' fileLoc{idx(j)} '" --mgf --32 --filter "peakPicking true chargeStatePredictor overrideExistingCharge=true maxMultipleCharge=4 minMultipleCharge=2 singleChargeFractionTIC=0.9 maxKnownCharge=1" -o ' [obj.folder.identification '/data']]);
     end
     fileIDX = idx;
     disp('File conversion finished...');

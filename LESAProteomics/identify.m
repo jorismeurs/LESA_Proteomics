@@ -171,6 +171,11 @@ classdef identify
         function obj = generateLibraryFile(obj)
             obj = results2library(obj);
         end
+        
+        function obj = libraryIdentification(obj)
+            raw2mgf(obj);
+            obj = getSampleSpectra(obj);
+        end
     end
     
 end
