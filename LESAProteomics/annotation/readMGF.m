@@ -1,5 +1,7 @@
 function mgfStruct = readMGF(file)
 
+% Validate file
+ismgf(file);
 
 % Default structure for data storage
 defaultStruct = struct('scanName',[],...
@@ -69,7 +71,14 @@ end
 % Get MS scan data (m/z and intensities)
 fprintf('Obtaining MS/MS scans...\n');
 startRow = find(contains(fileData,'CHARGE='));
-startRow = startRow+1; % Spectral data starts in row after charge
+if isempty(startRow)
+    warning('Charge state not found');
+    startRow = find(contains(fileData,'PEPMASS='));
+    startRow = startRow+2; % Second row after 'PEPMASS' is first m/z value
+else
+    startRow = startRow+1; % Spectral data starts in row after charge
+end
+disp(startRow(1));
 endRow = find(contains(fileData,'END'));
 endRow = endRow-1; % Spectral data ends row before 'END'
 if length(startRow) ~= length(endRow)
@@ -90,6 +99,7 @@ end
 fprintf('Finished!\n');
 
 end
+
 function ismgf(files)   
     if ~iscell(files)
         tf = ~isempty(find(contains(files,'mgf')));
