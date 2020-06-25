@@ -173,7 +173,7 @@ classdef identify
             obj = results2library(obj);
         end
         
-        function obj = libraryIdentification(obj)
+        function obj = libraryID(obj)
             cd(obj.folder.library);
             try
                 libraryData = load('library.mat');

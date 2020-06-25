@@ -2,7 +2,7 @@ function obj = plotMS2Data(obj,scanData)
 
 stem(scanData(:,1),scanData(:,2),'Color',repmat(0.7,1,3),'Marker','none');
 xlim([min(scanData(:,1))-10 max(scanData(:,1))+10]);
-ylim([0 max(scanData(:,2))+0.1*max(scanData(:,2))]);
+ylim([-100 100]);
 set(gcf,'Color','white');
 set(gca,'FontName','Calibri','FontSize',14);
 xlabel('\it{m/z}','interpreter','tex');
