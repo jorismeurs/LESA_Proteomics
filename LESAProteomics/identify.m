@@ -174,8 +174,36 @@ classdef identify
         end
         
         function obj = libraryIdentification(obj)
-            raw2mgf(obj)
-            obj = getSampleSpectra(obj);
+            cd(obj.folder.library);
+            try
+                libraryData = load('library.mat');
+            catch 
+                error('Library file missing. Run <strong>generateLibraryFile<\strong>');
+            end
+            library = libraryData.library;
+            outputFolder = [obj.folder.identification '\library\sample_files'];
+            cd(outputFolder)
+            try
+                delete *.mgf
+            catch
+                warning('Folder is empty');
+            end
+            cd(obj.folder.mainFolder);
+            raw2mgf(outputFolder);
+            
+            cd(outputFolder)
+            mgfFiles = dir('*.mgf');
+            sampleFiles = [];
+            for j = 1:length(mgfFiles)
+                sampleFiles = [sampleFiles;cellstr(fullfile(mgfFiles(j).folder,mgfFiles(j).name))];
+            end
+            cd(obj.folder.mainFolder);
+            
+            for j = 1:length(sampleFiles)
+               MGFStruct = readMGF(sampleFiles{j});
+               identificationData{j} = scoreCorrelation(MGFStruct,library);
+            end
+            obj.output.libraryID = identificationData; 
         end
     end
     
