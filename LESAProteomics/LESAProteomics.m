@@ -1,7 +1,7 @@
 classdef LESAProteomics < visualise & identify & annotate & quantify
     
     properties (Constant = true)
-        version = '0.5.2';
+        version = '0.6.0';
         developer = 'Joris Meurs, MSc';
     end
     
@@ -32,6 +32,8 @@ classdef LESAProteomics < visualise & identify & annotate & quantify
             
             obj.output.MS1Data = [];
             obj.output.MS2Data = [];
+            obj.output.file = [];
+            obj.output.file.identification = [];
             obj.settings.PeptideShakerVersion = '1.16.45';
             obj.settings.SearchGUIVersion = '3.3.20';
             obj.settings.reportNumber = '11';

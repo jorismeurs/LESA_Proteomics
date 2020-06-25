@@ -87,6 +87,10 @@ classdef annotate
            saveas(gcf,[obj.output.peptideSequence obj.settings.imageFormat]);
            cd(obj.folder.mainFolder);
         end
+        
+        function obj = annotateLibraryMatches(obj)
+            
+        end
     end
     
 end
