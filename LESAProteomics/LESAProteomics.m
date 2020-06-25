@@ -1,7 +1,7 @@
 classdef LESAProteomics < visualise & identify & annotate & quantify
     
     properties (Constant = true)
-        version = '0.5.1';
+        version = '0.5.2';
         developer = 'Joris Meurs, MSc';
     end
     
@@ -23,10 +23,12 @@ classdef LESAProteomics < visualise & identify & annotate & quantify
             obj.folder.annotation = fullfile(obj.folder.mainFolder,'annotation');
             obj.folder.quantification = fullfile(obj.folder.mainFolder,'quantification');
             obj.folder.export = fullfile(obj.folder.mainFolder,'images');
+            obj.folder.library = fullfile(obj.folder.identification,'library');
             addpath(obj.folder.identification);
             addpath(obj.folder.annotation);
             addpath(obj.folder.quantification);
             addpath(obj.folder.export);
+            addpath(obj.folder.library);
             
             obj.output.MS1Data = [];
             obj.output.MS2Data = [];

@@ -78,7 +78,6 @@ if isempty(startRow)
 else
     startRow = startRow+1; % Spectral data starts in row after charge
 end
-disp(startRow(1));
 endRow = find(contains(fileData,'END'));
 endRow = endRow-1; % Spectral data ends row before 'END'
 if length(startRow) ~= length(endRow)
@@ -89,10 +88,19 @@ if isempty(startRow) || isempty(endRow)
 end
 for n = 1:length(startRow)
     tempMS = []; tempMZ = []; tempINT = []; tempScan = [];
-    tempMS = str2double(fileData(startRow(n):endRow(n),1));
-    tempMZ = tempMS(1:2:end);
-    tempINT = tempMS(2:2:end);
-    tempScan = [tempMZ,tempINT];
+    try
+        tempMS = str2double(fileData(startRow(n):endRow(n),1));
+        tempMZ = tempMS(1:2:end);
+        tempINT = tempMS(2:2:end);
+        tempScan = [tempMZ,tempINT];
+    catch
+        % Reduce start row by 1 when intensity is missing
+        startRow(n) = startRow(n)-1;
+        tempMS = str2double(fileData(startRow(n):endRow(n),1));
+        tempMZ = tempMS(1:2:end);
+        tempINT = tempMS(2:2:end);
+        tempScan = [tempMZ,tempINT];
+    end
     mgfStruct.scan(n).scanData = tempScan;
 end
 
