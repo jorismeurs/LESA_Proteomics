@@ -1,4 +1,4 @@
-function noFile = raw2mgf(obj)
+function noFile = raw2mgf(outputFolder)
 
 [FileName,PathName] = uigetfile({'*.raw','Thermo RAW (.raw)';'*.mgf','MASCOT Generic Format (.mgf)'},...
       'MultiSelect','on');
@@ -33,7 +33,7 @@ end
 if isequal(fileExt,'raw')
     for j = 1:length(idx)
         system('cd C:\ProteoWizard\');
-        system(['msconvert "' fileLoc{idx(j)} '" --mgf --32 --filter "peakPicking true" -o ' [obj.folder.identification '/data']]);
+        system(['msconvert "' fileLoc{idx(j)} '" --mgf --32 --filter "peakPicking true" -o ' outputFolder]);
     end
     fileIDX = idx;
     disp('File conversion finished...');
@@ -41,7 +41,7 @@ end
 
 % Move .mgf file to data folder
 if isequal(fileExt,'mgf')
-    copyfile(fileLoc,[obj.folder.identification '\data'])
+    copyfile(fileLoc,outputFolder)
 end
 
 noFile = false;

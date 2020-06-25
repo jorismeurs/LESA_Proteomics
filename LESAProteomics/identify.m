@@ -56,7 +56,8 @@ classdef identify
         
         function obj = runSearch(obj)
             validateID(obj);
-            noFile = raw2mgf(obj);
+            outputFolder = [obj.folder.identification '\data'];
+            noFile = raw2mgf(outputFolder);
             if noFile == true
                 error('No files selected');
             end
@@ -173,7 +174,7 @@ classdef identify
         end
         
         function obj = libraryIdentification(obj)
-            raw2mgf(obj);
+            raw2mgf(obj)
             obj = getSampleSpectra(obj);
         end
     end
