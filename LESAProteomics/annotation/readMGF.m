@@ -1,5 +1,6 @@
 function mgfStruct = readMGF(file)
 
+
 % Validate file
 ismgf(file);
 
@@ -54,54 +55,44 @@ catch
     warning('Precursor data not found')
 end
 
-% Get charge
-fprintf('Obtaining precursor charge...\n');
-chargeRow = find(contains(fileData,'CHARGE='));
-try
-    for n = 1:length(chargeRow)
-       tempCharge = []; chargeIDX = [];
-       tempCharge = fileData{chargeRow(n),1};
-       chargeIDX = find(tempCharge=='=');
-       mgfStruct.scan(n).z = double(str2num(tempCharge(chargeIDX+1:end-1)));
-    end
-catch
-    warning('Charge not found');
-end
-
-% Get MS scan data (m/z and intensities)
+% Get scan data and charge (if present)
 fprintf('Obtaining MS/MS scans...\n');
-startRow = find(contains(fileData,'CHARGE='));
-if isempty(startRow)
-    warning('Charge state not found');
-    startRow = find(contains(fileData,'PEPMASS='));
-    startRow = startRow+2; % Second row after 'PEPMASS' is first m/z value
-else
-    startRow = startRow+1; % Spectral data starts in row after charge
-end
+beginRow = find(contains(fileData,'BEGIN'));
 endRow = find(contains(fileData,'END'));
-endRow = endRow-1; % Spectral data ends row before 'END'
-if length(startRow) ~= length(endRow)
+if length(beginRow) ~= length(endRow)
    error('Unequal rows'); 
 end
-if isempty(startRow) || isempty(endRow)
-   warning('No MS/MS data');
-end
-for n = 1:length(startRow)
-    tempMS = []; tempMZ = []; tempINT = []; tempScan = [];
-    try
-        tempMS = str2double(fileData(startRow(n):endRow(n),1));
-        tempMZ = tempMS(1:2:end);
-        tempINT = tempMS(2:2:end);
-        tempScan = [tempMZ,tempINT];
-    catch
-        % Reduce start row by 1 when intensity is missing
-        startRow(n) = startRow(n)-1;
-        tempMS = str2double(fileData(startRow(n):endRow(n),1));
-        tempMZ = tempMS(1:2:end);
-        tempINT = tempMS(2:2:end);
-        tempScan = [tempMZ,tempINT];
-    end
-    mgfStruct.scan(n).scanData = tempScan;
+
+for n = 1:length(beginRow)
+   tempScanData = []; tempMS = []; tempINT = []; tempScan = [];
+   tempScanData = fileData(beginRow(n):endRow(n),1);
+   chargeRow = find(contains(tempScanData,'CHARGE='));
+   if ~isempty(chargeRow)
+      tempCharge = fileData{chargeRow,1};
+      chargeIDX = find(tempCharge=='='); 
+      mgfStruct.scan(n).z = double(str2num(tempCharge(chargeIDX+1:end-1)));
+      scanRowStart = chargeRow+1;
+      tempMS = str2double(tempScanData(scanRowStart:end-1,1));
+      tempMZ = tempMS(1:2:end);
+      tempINT = tempMS(2:2:end);
+      tempScan = [tempMZ,tempINT];
+   else
+      mgfStruct.scan(n).z = NaN; 
+      scanRowStart = find(contains(tempScanData,'PEPMASS='));
+      scanRowStart = scanRowStart+2;
+      try
+          tempMS = str2double(tempScanData(scanRowStart:end-1,1));
+          tempMZ = tempMS(1:2:end);
+          tempINT = tempMS(2:2:end);
+          tempScan = [tempMZ,tempINT];
+      catch
+          tempMS = str2double(tempScanData(scanRowStart-1:end-1,1));
+          tempMZ = tempMS(1:2:end);
+          tempINT = tempMS(2:2:end);
+          tempScan = [tempMZ,tempINT];
+      end
+   end
+   mgfStruct.scan(n).scanData = tempScan;
 end
 
 fprintf('Finished!\n');
