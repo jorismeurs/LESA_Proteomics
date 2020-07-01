@@ -20,8 +20,15 @@ for j = 1:length(MGFStruct.scan)
            idx = find(scanData(:,1) > libraryMZ(k)-maxDev & ...
                scanData(:,1) < libraryMZ(k)+maxDev);
            if ~isempty(idx)
-               sampleMZ = [sampleMZ;scanData(idx,1)];
-               intensityMatrix(k,1) = scanData(idx,2);
+               if numel(idx) > 1
+                   diff = libraryMZ(k)-scanData(idx,1);
+                   min_diff = find(diff==min(diff));
+                   sampleMZ = [sampleMZ;scanData(idx(min_diff),1)];
+                   intensityMatrix(k,1) = scanData(idx(min_diff),2);
+               else
+                   sampleMZ = [sampleMZ;scanData(idx,1)];
+                   intensityMatrix(k,1) = scanData(idx,2);
+               end
            else
                sampleMZ = [sampleMZ;libraryMZ(k)];
            end
