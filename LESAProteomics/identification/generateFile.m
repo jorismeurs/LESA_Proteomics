@@ -1,11 +1,28 @@
 function obj = generateFile(obj)
     clc
-    %searchFolder = [obj.folder.mainFolder '\identification\SearchGUI-' obj.settings.SearchGUIVersion];
-    %cd(searchFolder);
+    searchFolder = [obj.folder.mainFolder '\identification\SearchGUI-' obj.settings.SearchGUIVersion];
+    cd(searchFolder);
     jar_struct = dir('*.jar'); 
     searchGUI_jar = jar_struct.name;
     fasta_struct = dir('*.fasta');
     fastaFile = fasta_struct.name;
+    generateDecoy = questdlg('Generate decoy sequences?','Decoys',...
+        'Yes','No','Yes');
+    switch generateDecoy
+        case 'Yes'
+           system(['cd ' obj.folder.searchFolder]);
+           system(['java -cp ' searchGUI_jar ' eu.isas.searchgui.cmd.FastaCLI',...
+               ' -in ' fastaFile,...
+               ' -decoy']);
+           extLoc = find(fastaFile=='.');        
+           fastaFile = [fastaFile(1:extLoc-1) '_concatenated_target_decoy'];
+        case 'No'
+           % Nothing 
+        otherwise
+           % Handle as 'no' 
+    end
+    
+    
     system(['cd ' obj.folder.searchFolder]);
     system(['java -cp ' searchGUI_jar ' eu.isas.searchgui.cmd.IdentificationParametersCLI',...
         ' -out ' obj.parameters.parameterFileName,...
