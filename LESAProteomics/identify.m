@@ -155,10 +155,6 @@ classdef identify
             cd(obj.folder.mainFolder);
         end
         
-        function obj = filterPSM(obj)
-            reportData = readReport(obj);
-            
-        end
         
         function obj = generateLibraryFile(obj)
             obj = results2library(obj);

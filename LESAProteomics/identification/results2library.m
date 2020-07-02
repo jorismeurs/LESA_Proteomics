@@ -3,6 +3,16 @@ function obj = results2library(obj)
 % Open report file
 reportData = readReport(obj);
 
+% Filter PSM
+scores = reportData(2:end,24);
+numericScores = [];
+for j = 1:length(scores)
+  numericScores = [numericScores;str2num(char(scores(j,1)))];
+end
+removeIDX = find(numericScores(:,1)<obj.settings.minPSMScore | isnan(numericScores(:,1)));
+removeIDX = removeIDX+1;
+reportData(removeIDX,:) = [];
+
 % Get files and spectrum titles
 sequenceList = reportData(2:end,3);
 proteinList = reportData(2:end,2);
