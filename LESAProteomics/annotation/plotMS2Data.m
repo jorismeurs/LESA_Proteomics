@@ -2,12 +2,12 @@ function obj = plotMS2Data(obj,scanData)
 
 stem(scanData(:,1),scanData(:,2),'Color',repmat(0.7,1,3),'Marker','none');
 xlim([min(scanData(:,1))-10 max(scanData(:,1))+10]);
-ylim([-100 100]);
+%ylim([-100 100]);
 set(gcf,'Color','white');
 set(gca,'FontName','Calibri','FontSize',14);
 xlabel('\it{m/z}','interpreter','tex');
 ylabel('Intensity');
-title([obj.output.peptideSequence ' ' obj.output.peptideCharge])
+title([obj.output.peptideSequence ' ' obj.output.precursorCharge])
 
 YIons = [obj.output.yIons.mz];
 YColor = [202/255,0/255,32/255];
