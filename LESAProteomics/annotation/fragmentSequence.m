@@ -4,13 +4,36 @@ function [yseries,bseries] = fragmentSequence(sequence)
 % Included ions: b, y
 
 % y-series
-yseries = struct('y',[],'mz',[]);
+yseries = struct('y',[],'mz',[],'waterLoss',[],'ammoniaLoss',[]);
 reversedSequence = fliplr(sequence);
 for j = 1:numel(reversedSequence)
     tempFragment = reversedSequence(1:j);
     mz = calculateMZ(tempFragment,'y');
     yseries(j).y = sprintf('y%d',j);
     yseries(j).mz = mz;
+end
+
+% y-series + neutral losses
+for j = 1:numel(reversedSequence)
+    tempFragment = reversedSequence(1:j);
+    
+    % Calculate potential water loss (https://www.ru.nl/publish/pages/580560/denovopeptidesequencingtutorial.pdf)
+    if contains(tempFragment,'E') || contains(tempFragment,'S') || contains(tempFragment,'T')
+       mz = calculateMZ(tempFragment,'y');
+       mz = mz-18.010565;
+       yseries(j).waterLoss = mz; 
+    else
+       yseries(j).waterLoss = NaN; 
+    end
+    
+     % Calculate potential ammonia loss (https://www.ru.nl/publish/pages/580560/denovopeptidesequencingtutorial.pdf)
+    if contains(tempFragment,'K') || contains(tempFragment,'R') || contains(tempFragment,'Q') || contains(tempFragment,'N')
+        mz = calculateMZ(tempFragment,'y');
+        mz = mz-17.026548;
+        yseries(j).ammoniaLoss = mz;
+    else
+        yseries(j).ammoniaLoss = NaN;
+    end
 end
 
 % b-series
@@ -20,6 +43,29 @@ for j = 1:numel(sequence)
     mz = calculateMZ(tempFragment,'b');
     bseries(j).b = sprintf('b%d',j);
     bseries(j).mz = mz;
+end
+
+% b-series + neutral losses
+for j = 1:numel(sequence)
+    tempFragment = sequence(1:j);
+    
+    % Calculate potential water loss (https://www.ru.nl/publish/pages/580560/denovopeptidesequencingtutorial.pdf)
+    if contains(tempFragment,'E') || contains(tempFragment,'S') || contains(tempFragment,'T')
+       mz = calculateMZ(tempFragment,'b');
+       mz = mz-18.010565;
+       bseries(j).waterLoss = mz; 
+    else
+       bseries(j).waterLoss = NaN; 
+    end
+    
+     % Calculate potential ammonia loss (https://www.ru.nl/publish/pages/580560/denovopeptidesequencingtutorial.pdf)
+    if contains(tempFragment,'K') || contains(tempFragment,'R') || contains(tempFragment,'Q') || contains(tempFragment,'N')
+        mz = calculateMZ(tempFragment,'b');
+        mz = mz-17.026548;
+        bseries(j).ammoniaLoss = mz;
+    else
+        bseries(j).ammoniaLoss = NaN;
+    end
 end
 
 end
