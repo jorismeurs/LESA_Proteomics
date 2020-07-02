@@ -98,7 +98,7 @@ classdef annotate
            cd(obj.folder.mainFolder);
         end
         
-        function obj = annotateLibraryMatches(obj)
+        function obj = annotateLibrary(obj)
            clc
            fileNo = input(sprintf('Select file (1-%d: ',length(obj.output.libraryID)));
            tempIDs = obj.output.libraryID{fileNo};

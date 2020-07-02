@@ -156,7 +156,7 @@ classdef identify
         end
         
         
-        function obj = generateLibraryFile(obj)
+        function obj = generateLibrary(obj)
             obj = results2library(obj);
         end
         
