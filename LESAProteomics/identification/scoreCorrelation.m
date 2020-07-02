@@ -37,18 +37,17 @@ for j = 1:length(MGFStruct.scan)
        intensityMatrix(:,2) = (librarySpectrum(:,2).*100)./max(librarySpectrum(:,2));
        referenceSpectrum = [libraryMZ,intensityMatrix(:,2)];
        sampleSpectrum = [sampleMZ,intensityMatrix(:,1)];
-       if ~isempty(sampleSpectrum) && ~isempty(referenceSpectrum)
-           R = corr(referenceSpectrum,sampleSpectrum);
-           if R >= 0.95
-                count = count+1;
-                ID(count).protein = libraryData(n).protein;
-                ID(count).sequence = libraryData(n).sequence;
-                ID(count).sample = sampleSpectrum;
-                ID(count).reference = referenceSpectrum;
-                ID(count).R = R;
-           else
-               continue
-           end
+
+       R = cosineCorrelation(intensityMatrix(:,1),intensityMatrix(:,2));
+       if R >= 0.95
+            count = count+1;
+            ID(count).protein = libraryData(n).protein;
+            ID(count).sequence = libraryData(n).sequence;
+            ID(count).sample = sampleSpectrum;
+            ID(count).reference = referenceSpectrum;
+            ID(count).R = R;
+       else
+           continue
        end
     end
 end
