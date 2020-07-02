@@ -15,7 +15,7 @@ function obj = generateFile(obj)
                ' -in ' fastaFile,...
                ' -decoy']);
            extLoc = find(fastaFile=='.');        
-           fastaFile = [fastaFile(1:extLoc-1) '_concatenated_target_decoy'];
+           fastaFile = [fastaFile(1:extLoc-1) '_concatenated_target_decoy.fasta'];
         case 'No'
            % Nothing 
         otherwise
