@@ -1,7 +1,7 @@
 classdef LESAProteomics < visualise & identify & annotate & quantify
     
     properties (Constant = true)
-        version = '0.6.9';
+        version = '0.6.10';
         developer = 'Joris Meurs, MSc';
     end
     
@@ -16,8 +16,9 @@ classdef LESAProteomics < visualise & identify & annotate & quantify
     
     methods
         function obj = LESAProteomics()
-            source = cd;           
+            source = fileparts(which('LESAProteomics'));           
             addpath(source);
+            cd(source);
             obj.folder.mainFolder = fullfile(source);
             obj.folder.identification = fullfile(obj.folder.mainFolder,'identification');
             obj.folder.annotation = fullfile(obj.folder.mainFolder,'annotation');
@@ -39,8 +40,8 @@ classdef LESAProteomics < visualise & identify & annotate & quantify
             obj.settings.reportNumber = '11';
             obj.settings.minPSMScore = 95;
             
-            obj.settings.MS1Tolerance = [];
-            obj.settings.MS2Tolerance = [];
+            obj.settings.MS1Tolerance = 10; % ppm
+            obj.settings.MS2Tolerance = 0.02; % Da
             obj.settings.peakThreshold = 1e4;
             obj.settings.imageFormat = '.tif';
             
