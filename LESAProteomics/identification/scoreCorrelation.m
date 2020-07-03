@@ -2,6 +2,7 @@ function ID = scoreCorrelation(MGFStruct,libraryData)
 
 ID = struct('protein',[],...
     'sequence',[],...
+    'z',[],...
     'sample',[],...
     'reference',[],...
     'R',[]);
@@ -43,8 +44,9 @@ for j = 1:length(MGFStruct.scan)
             count = count+1;
             ID(count).protein = libraryData(n).protein;
             ID(count).sequence = libraryData(n).sequence;
+            ID(count).z = libraryData(n).z;
             ID(count).sample = sampleSpectrum;
-            ID(count).reference = referenceSpectrum;
+            ID(count).reference = referenceSpectrum;            
             ID(count).R = R;
        else
            continue

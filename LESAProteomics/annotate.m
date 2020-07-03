@@ -100,24 +100,24 @@ classdef annotate
         
         function obj = annotateLibrary(obj)
            clc
-           fileNo = input(sprintf('Select file (1-%d: ',length(obj.output.libraryID)));
+           fileNo = input(sprintf('Select file (1-%d): ',length(obj.output.libraryID)));
            tempIDs = obj.output.libraryID{fileNo};
            tempProtein = {tempIDs.protein}';
            tempSequence = {tempIDs.sequence}';
+           tempCharge = {tempIDs.z}';
            for j = 1:length(tempProtein)
                fprintf('(%d) %s | %s \n',j,tempProtein{j,1},tempSequence{j,1});
            end
            matchIndex = input('Select match for annotation:     ');
             
             % Annotate fragment ions
-           %obj.output.peptideSequence = char(tempSequence(matchIndex));
-           %obj.output.peptideCharge = char(precursorCharge(obj.output.scanIndex));
+           obj.output.peptideSequence = char(tempSequence(matchIndex));
            [yseries,bseries] = fragmentSequence(char(tempSequence(matchIndex)));
            obj.output.yIons = yseries;
            obj.output.bIons = bseries;
            
            % Plot data
-           obj = plotLibraryData(obj,tempIDs(matchIndex).reference,tempIDs(matchIndex).sample);
+           obj = plotLibraryData(obj,tempIDs(matchIndex).reference,tempIDs(matchIndex).sample,tempSequence{matchIndex},tempCharge{matchIndex});
            cd(obj.folder.export);
            saveas(gcf,[tempSequence{matchIndex,1} '_library' obj.settings.imageFormat]);
            cd(obj.folder.mainFolder);
