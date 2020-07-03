@@ -8,7 +8,6 @@ set(gca,'FontName','Calibri','FontSize',14);
 xlabel('\it{m/z}','interpreter','tex');
 ylabel('Intensity');
 title(sprintf('%s %s',sequence,charge))
-fragmentIonIntensity = [];
 
 YIons = [obj.output.yIons.mz];
 YColor = [202/255,0/255,32/255];
@@ -74,6 +73,7 @@ for j = 1:length(BIons)
               'VerticalAlignment','Bottom',...
               'FontWeight','bold',...
               'FontAngle','italic');
+          obj.output.fragmentIonIntensity = [obj.output.fragmentIonIntensity;sampleSpec(matchIon,2)];
        end
     end
 end
