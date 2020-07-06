@@ -34,10 +34,10 @@ for j = 1:length(MGFStruct.scan)
                sampleMZ = [sampleMZ;libraryMZ(k)];
            end
        end
-       intensityMatrix(:,1) = (intensityMatrix(:,1).*100)./max(intensityMatrix(:,1));
-       intensityMatrix(:,2) = (librarySpectrum(:,2).*100)./max(librarySpectrum(:,2));
        referenceSpectrum = [libraryMZ,intensityMatrix(:,2)];
        sampleSpectrum = [sampleMZ,intensityMatrix(:,1)];
+       intensityMatrix(:,1) = (intensityMatrix(:,1).*100)./max(intensityMatrix(:,1));
+       intensityMatrix(:,2) = (librarySpectrum(:,2).*100)./max(librarySpectrum(:,2));     
 
        R = cosineCorrelation(intensityMatrix(:,1),intensityMatrix(:,2));
        if R >= 0.95
