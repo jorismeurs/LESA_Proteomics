@@ -39,6 +39,7 @@ classdef LESAProteomics < visualise & identify & annotate & quantify
             obj.settings.SearchGUIVersion = '3.3.20';
             obj.settings.reportNumber = '11';
             obj.settings.minPSMScore = 95;
+            obj.settings.topNFragments = 3;
             
             obj.settings.MS1Tolerance = 10; % ppm
             obj.settings.MS2Tolerance = 0.02; % Da

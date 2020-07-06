@@ -30,14 +30,39 @@ classdef quantify
             obj = getPeptideMZ(obj,index);
         end
         
-        function obj = MS2Quantfication(obj)
+        function obj = MS2Quant(obj)
             % To be developed
             
             % Select peptide
+            tempSequence = [];
+            for j = 1:length(obj.output.libraryID)
+                tempSequence = [tempSequence;{obj.output.libraryID{j}.sequence}'];
+            end
+            tempSequence = unique(tempSequence);
+            clc
+            for j = 1:length(tempSequence)
+               fprintf('(%d) %s \n',j,tempSequence{j}); 
+            end
+            peptideIndex = input('Select a peptide: ');
+            selectedPeptide = tempSequence{peptideIndex};
             
-            % Select number of fragment ions (top N most intense)
+            % Retrieve best correlation
+            for j = 1:length(obj.output.libraryID)
+               tempSequence = {obj.output.libraryID{j}.sequence}';
+               tempCorr = [obj.output.libraryID{j}.R]';
+               matchIndex = find(strcmp(tempSequence,selectedPeptide));
+               maxCorr = find(tempCorr(matchIndex,1)==max(tempCorr(matchIndex,1)));
+               quantIndex = matchIndex(maxCorr);
+               quantSpectrum{j} = obj.output.libraryID{j}(quantIndex).sample;
+            end            
             
-            % Get intensity
+            % Retrieve top N most intense fragments
+            obj.output.topN = [];
+            for j = 1:length(quantSpectrum)
+                tempSpectrum = cell2mat(quantSpectrum(j));
+                [y,b] = fragmentSequence(selectedPeptide);    
+                obj.output.topN{j} = retrieveTopNFragments(obj,tempSpectrum,b,y);
+            end
         end
         
         function obj = getFiles(obj)
