@@ -18,7 +18,7 @@ sequenceList = reportData(2:end,3);
 proteinList = reportData(2:end,2);
 mgfList = unique(reportData(2:end,10));
 scanList = reportData(2:end,11);
-precursorCharge = obj.output.reportData(2:end,15);
+precursorCharge = reportData(2:end,15);
 
 % Collect peptide spectra and store as .mat
 cd(obj.folder.identification);
