@@ -9,16 +9,16 @@ classdef quantify
                         
             reportData = readReport(obj);
             obj.output.reportData = reportData;
-            peptideScans = obj.output.reportData(2:end,6);
-            peptideAnnotations = obj.output.reportData(2:end,17);
-            precursorCharge = obj.output.reportData(2:end,14);
-            peptideSequence = obj.output.reportData(2:end,4);
+            peptideScans = obj.output.reportData(2:end,11);
+            precursorCharge = obj.output.reportData(2:end,15);
+            peptideSequence = obj.output.reportData(2:end,3);
+            mzList = obj.output.reportData(2:end,14);
 
             clc
             for j = 1:length(peptideScans)
-               fprintf('(%d) %s | %s \n',j,peptideScans{j},peptideSequence{j}); 
+               fprintf('(%d) %s (m/z %.4f) \n',j,peptideSequence{j},str2num(mzList{j})); 
             end
-            index = input('Select index for scan of interest: ');
+            index = input('Select peptide of interest: ');
             obj.output.peptideSequence = char(peptideSequence(index));
             obj.output.peptideCharge = char(precursorCharge(index));
             obj.output.peptideCharge = str2num(obj.output.peptideCharge(1:end-1));
@@ -26,8 +26,8 @@ classdef quantify
             if isempty(obj.settings.MS1Tolerance)
                 obj.settings.MS1Tolerance = input('MS1 tolerance (ppm): ');
             end
-            
-            obj = getPeptideMZ(obj,index);
+            obj.output.peptideMZ = str2double(mzList{index});
+
         end
         
         function obj = MS2QuantLibrary(obj)
