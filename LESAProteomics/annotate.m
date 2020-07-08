@@ -16,6 +16,9 @@ classdef annotate
             obj.output.reportData = reportData;
             mzList = reportData(2:end,14);
             proteinList = reportData(2:end,2);
+            decoys = find(contains(proteinList,'_REVERSED'));
+            mzList(decoys,:) = [];
+            proteinList(decoys,:) = [];
                         
             % Select file
             fileList = unique(reportData(2:end,10));
