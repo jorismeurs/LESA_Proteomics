@@ -30,7 +30,7 @@ classdef quantify
             obj = getPeptideMZ(obj,index);
         end
         
-        function obj = MS2Quant(obj)
+        function obj = MS2QuantLibrary(obj)
             % To be developed
             
             % Select peptide
@@ -63,6 +63,10 @@ classdef quantify
                 [y,b] = fragmentSequence(selectedPeptide);    
                 obj.output.topN{j} = retrieveTopNFragments(obj,tempSpectrum,b,y);
             end
+        end
+        
+        function obj = MS2QuantSearch(obj)
+            
         end
         
         function obj = getFiles(obj)
