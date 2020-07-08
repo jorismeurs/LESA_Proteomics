@@ -30,9 +30,7 @@ classdef quantify
 
         end
         
-        function obj = MS2QuantLibrary(obj)
-            % To be developed
-            
+        function obj = MS2QuantLibrary(obj)           
             % Select peptide
             tempSequence = [];
             for j = 1:length(obj.output.libraryID)
@@ -66,7 +64,47 @@ classdef quantify
         end
         
         function obj = MS2QuantSearch(obj)
+            % Select peptide
+            reportData = readReport(obj);
+            obj.output.reportData = reportData;
+            decoys = find(contains(reportData(:,2),'_REVERSED'));
+            reportData(decoys,:) = [];
+            PTMs = find(~cellfun(@isempty,reportData(:,8)));
+            reportData(PTMs,:) = [];
+            peptideScans = reportData(2:end,11);
+            precursorCharge = reportData(2:end,15);
+            peptideSequence = reportData(2:end,3);
+            mzList = reportData(2:end,14);
+
+            clc
+            for j = 1:length(peptideScans)
+               fprintf('(%d) %s (m/z %.4f) \n',j,peptideSequence{j},str2num(mzList{j})); 
+            end
+            index = input('Select peptide of interest: ');
+            peptide = peptideSequence{index};
+            charge = precursorCharge{index};
+            idx = find(strcmp(peptideSequence,peptide) & strcmp(precursorCharge,charge));
+            fileData = [reportData(idx+1,10),reportData(idx+1,11)];
+            fileData = sortrows(fileData,1);
             
+            % Retrieve MS2 spectrum per file
+            obj.output.MS2Data.quantSpectrum = [];
+            for j = 1:length(fileData)
+                cd([obj.folder.identification '\data']);
+                MGFStruct = readMGF(fileData{j,1});
+                tempScanNames = {MGFStruct.scan.scanName}';
+                scanIndex = find(strcmp(tempScanNames,fileData{j,2}));
+                obj.output.MS2Data.quantSpectrum{j,1} = MGFStruct.scan(scanIndex).scanData;
+                cd(obj.folder.mainFolder);
+            end
+            
+            % Find matching fragment ions and retrieve top N intensity
+            obj.output.topN = [];
+            for j = 1:length(obj.output.MS2Data.quantSpectrum)
+                tempSpectrum = cell2mat(obj.output.MS2Data.quantSpectrum(j));
+                [y,b] = fragmentSequence(peptide);    
+                obj.output.topN{j} = retrieveTopNFragments(obj,tempSpectrum,b,y);
+            end
         end
         
         function obj = getFiles(obj)
