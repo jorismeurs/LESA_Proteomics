@@ -1,21 +1,25 @@
 function plotMS1Data(obj)
 
+proteins = unique(obj.output.proteinList);
+clc
+fprintf('PROVIDE LABELS FOR PLOT \n');
+for j = 1:length(proteins)
+   proteinLabel{j} = input(sprintf('%s:  ',proteins{j}),'s'); 
+end
 scanData = double(obj.output.scanData);
 
 stem(scanData(:,1),scanData(:,2),'Color',repmat(0.7,1,3),'Marker','none');
-xlim([min(scanData(:,1))-10 max(scanData(:,1))+10]);
+if isempty(obj.settings.XLim)
+    xlim([min(scanData(:,1))-10 max(scanData(:,1))+10]);
+else
+    xlim(obj.settings.XLim);
+end
 set(gcf,'Color','white');
 set(gca,'FontName','Calibri','FontSize',14);
 xlabel('\it{m/z}','interpreter','tex');
 ylabel('Intensity');
 
 precursorColor = [202/255,0/255,32/255];
-
-proteins = unique(obj.output.proteinList);
-for j = 1:length(proteins)
-   proteinLabel{j} = input(sprintf('Label: %s:  ',proteins{j}),'s'); 
-end
-
 
 hold on
 for n = 1:length(proteins)
@@ -46,7 +50,9 @@ for n = 1:length(proteins)
                else
                    text(scanData(peakMatch(min_diff),1)+26,scanData(peakMatch(min_diff),2),...
                        proteinLabel{n},'FontSize',9,'FontName','Calibri',...
-                       'FontWeight','bold')
+                       'FontWeight','bold',...
+                       'HorizontalAlignment','Center',...
+                       'VerticalAlignment','Bottom')
                end
            else
                stem(scanData(peakMatch,1),scanData(peakMatch,2),...
@@ -65,9 +71,11 @@ for n = 1:length(proteins)
                        proteinLabel{n},'FontSize',9,'FontName','Calibri',...
                        'FontWeight','bold')
                else
-                   text(scanData(peakMatch,1)+26,scanData(peakMatch,2),...
-                       proteinLabel{n},'FontSize',9,'Calibri',...
-                       'FontWeight','bold')
+                   text(scanData(peakMatch,1),scanData(peakMatch,2),...
+                       proteinLabel{n},'FontSize',9,'FontName','Calibri',...
+                       'FontWeight','bold',...
+                       'HorizontalAlignment','Center',...
+                       'VerticalAlignment','Bottom');
                end
            end
         else
