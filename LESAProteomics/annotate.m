@@ -67,9 +67,10 @@ classdef annotate
            proteinList = reportData(2:end,2);
            mgfList = reportData(2:end,10);
            scanList = reportData(2:end,11);
+           mzList = reportData(2:end,14);
            clc
            for j = 1:length(proteinList)
-               fprintf('(%d) %s | %s \n',j,proteinList{j},sequenceList{j});
+               fprintf('(%d) %s | %s (m/z %s) \n',j,proteinList{j},sequenceList{j},mzList{j});
            end
            PSMindex = input('Select PSM for annotation:     ');
            mgfLocation = fullfile(obj.folder.identification,'data',mgfList{PSMindex});
