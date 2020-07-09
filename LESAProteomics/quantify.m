@@ -159,10 +159,37 @@ classdef quantify
             end
         end
         
-        function obj = plotResults(obj)
-            % Define groups
+        function obj = setGroups(obj)
+            reportData = readReport(obj);
+            fileList = unique(reportData(2:end,10));
+
+            obj.settings.group_code = [];
+            for j = 1:length(fileList)
+                obj.settings.group_code = [obj.settings.group_code;input(sprintf('Group no. for %s:  ',fileList{j}))];                
+            end
+            obj.settings.groups = unique(obj.settings.group_code);
             
-            % Box plot
+            obj.settings.groupName = [];
+            for j = 1:length(obj.settings.groups)
+                obj.settings.groupName = [obj.settings.groupName;cellstr(input(sprintf('Group label for %s: ',num2str(obj.settings.groups(j))),'s'))];
+            end
+        end
+        
+        function obj = plotResultsMS1(obj)
+                       
+            data = obj.output.MS1Data.peptideIntensity;
+            
+            % Jitter plot
+            jitterplot(log(data),obj.settings.group_code)
+            set(gca,'XTick',1:1:length(obj.settings.groups));
+            set(gca,'XTickLabel',obj.settings.groupName);
+            set(gca,'FontName','Calibri','FontSize',14);
+            set(gcf,'Color','white');
+            ylabel('Log intensity');
+            
+            cd(obj.folder.export);
+            export_fig('MS1_quant','-tif');
+            cd(obj.folder.mainFolder);
         end
     end
     
