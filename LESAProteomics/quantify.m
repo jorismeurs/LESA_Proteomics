@@ -99,11 +99,11 @@ classdef quantify
             end
             
             % Find matching fragment ions and retrieve top N intensity
-            obj.output.topN = [];
+            obj.output.MS2Data.topN = [];
             for j = 1:length(obj.output.MS2Data.quantSpectrum)
                 tempSpectrum = cell2mat(obj.output.MS2Data.quantSpectrum(j));
                 [y,b] = fragmentSequence(peptide);    
-                obj.output.topN{j} = retrieveTopNFragments(obj,tempSpectrum,b,y);
+                obj.output.MS2Data.topN{j} = retrieveTopNFragments(obj,tempSpectrum,b,y);
             end
         end
         
@@ -180,7 +180,9 @@ classdef quantify
             data = obj.output.MS1Data.peptideIntensity;
             
             % Jitter plot
-            jitterplot(log(data),obj.settings.group_code)
+            jitterplot(log(data),obj.settings.group_code,...
+                'meanWidth',0.06,...
+                'stdWidth',0.1)
             set(gca,'XTick',1:1:length(obj.settings.groups));
             set(gca,'XTickLabel',obj.settings.groupName);
             set(gca,'FontName','Calibri','FontSize',14);
@@ -189,6 +191,29 @@ classdef quantify
             
             cd(obj.folder.export);
             export_fig('MS1_quant','-tif');
+            cd(obj.folder.mainFolder);
+        end
+        
+        function obj = plotResultsMS2(obj)
+                       
+            data = [];
+            for j = 1:length(obj.output.MS2Data.topN)
+                tempData = cell2mat(obj.output.MS2Data.topN(j));
+                data = [data;max(tempData)];
+            end
+            
+            % Jitter plot
+            jitterplot(log(data),obj.settings.group_code,...
+                'meanWidth',0.06,...
+                'stdWidth',0.1)
+            set(gca,'XTick',1:1:length(obj.settings.groups));
+            set(gca,'XTickLabel',obj.settings.groupName);
+            set(gca,'FontName','Calibri','FontSize',14);
+            set(gcf,'Color','white');
+            ylabel('Log intensity');
+            
+            cd(obj.folder.export);
+            export_fig('MS2_quant','-tif');
             cd(obj.folder.mainFolder);
         end
     end
