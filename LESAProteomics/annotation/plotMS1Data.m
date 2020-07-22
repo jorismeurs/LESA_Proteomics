@@ -8,7 +8,7 @@ for j = 1:length(proteins)
 end
 scanData = double(obj.output.scanData);
 
-stem(scanData(:,1),scanData(:,2),'Color',repmat(0.7,1,3),'Marker','none');
+stem(scanData(:,1),scanData(:,2),'Color',repmat(0.5,1,3),'Marker','none');
 if isempty(obj.settings.XLim)
     xlim([min(scanData(:,1))-10 max(scanData(:,1))+10]);
 else
