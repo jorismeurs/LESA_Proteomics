@@ -23,6 +23,7 @@ precursorCharge = reportData(2:end,15);
 % Collect peptide spectra and store as .mat
 cd(obj.folder.identification);
 count = 0;
+library  = [];
 for j = 1:length(mgfList)
     MGFStruct = readMGF(mgfList{j});
     titleList = {MGFStruct.scan.scanName}';
