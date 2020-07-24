@@ -188,7 +188,7 @@ classdef identify
             
             for j = 1:length(sampleFiles)
                MGFStruct = readMGF(sampleFiles{j});
-               identificationData{j} = scoreCorrelation(MGFStruct,library);
+               identificationData{j} = scoreCorrelation(obj,MGFStruct,library);
             end
             obj.output.libraryID = identificationData; 
         end
