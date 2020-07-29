@@ -32,6 +32,7 @@ classdef LESAProteomics < visualise & identify & annotate & quantify
             
             obj.output.MS1Data = [];
             obj.output.MS2Data = [];
+            obj.output.annotations = [];
             obj.output.file = [];
             obj.output.file.identification = [];
             obj.settings.PeptideShakerVersion = '1.16.45';
