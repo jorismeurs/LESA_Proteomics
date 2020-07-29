@@ -14,7 +14,7 @@ classdef annotate
             clc
             reportData = readReport(obj);
             obj.output.reportData = reportData;
-            
+            proteinList = reportData(2:end,2);
             decoys = find(contains(proteinList,'_REVERSED'));
             reportData(decoys,:) = [];
             
