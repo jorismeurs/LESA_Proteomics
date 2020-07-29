@@ -14,11 +14,12 @@ classdef annotate
             clc
             reportData = readReport(obj);
             obj.output.reportData = reportData;
+            
+            decoys = find(contains(proteinList,'_REVERSED'));
+            reportData(decoys,:) = [];
+            
             mzList = reportData(2:end,14);
             proteinList = reportData(2:end,2);
-            decoys = find(contains(proteinList,'_REVERSED'));
-            mzList(decoys,:) = [];
-            proteinList(decoys,:) = [];
                         
             % Select file
             fileList = unique(reportData(2:end,10));
@@ -28,6 +29,7 @@ classdef annotate
             end
             fileIndex = input('Choose file for annotation:  ');
             mzIndex = find(strcmp(allFiles,fileList{fileIndex}));
+            disp
             obj.output.mzList = mzList(mzIndex,1);
             obj.output.proteinList = proteinList(mzIndex,1);
             raw2mzxml(obj);
