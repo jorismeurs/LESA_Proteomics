@@ -29,7 +29,7 @@ classdef annotate
             end
             fileIndex = input('Choose file for annotation:  ');
             mzIndex = find(strcmp(allFiles,fileList{fileIndex}));
-            disp
+
             obj.output.mzList = mzList(mzIndex,1);
             obj.output.proteinList = proteinList(mzIndex,1);
             raw2mzxml(obj);
