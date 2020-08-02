@@ -34,8 +34,12 @@ for j = 1:length(BIons)
     end
 end
 
-intensities = sort(intensities,'descend');
-topN = intensities(1:obj.settings.topNFragments,1);
+try
+    intensities = sort(intensities,'descend');
+    topN = intensities(1:obj.settings.topNFragments,1);
+catch
+    topN = NaN;
+end
 
 end
 

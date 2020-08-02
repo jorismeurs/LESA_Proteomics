@@ -86,6 +86,7 @@ classdef quantify
             idx = find(strcmp(peptideSequence,peptide) & strcmp(precursorCharge,charge));
             fileData = [reportData(idx+1,10),reportData(idx+1,11)];
             fileData = sortrows(fileData,1);
+            obj.output.MS2Data.files = fileData;
             
             % Retrieve MS2 spectrum per file
             obj.output.MS2Data.quantSpectrum = [];
@@ -102,6 +103,7 @@ classdef quantify
             obj.output.MS2Data.topN = [];
             for j = 1:length(obj.output.MS2Data.quantSpectrum)
                 tempSpectrum = cell2mat(obj.output.MS2Data.quantSpectrum(j));
+                obj.output.MS2Data.totIonCurrent(j) = sum(tempSpectrum(:,2));
                 [y,b] = fragmentSequence(peptide);    
                 obj.output.MS2Data.topN{j} = retrieveTopNFragments(obj,tempSpectrum,b,y);
             end
