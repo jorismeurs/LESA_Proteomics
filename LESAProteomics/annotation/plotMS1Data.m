@@ -11,7 +11,14 @@ switch proteinSelection
         proteinIdx = input('Select protein: ');
         proteinLabel = input('Define label for protein: ','s');
         matchedRows = find(strcmp(proteins{proteinIdx},obj.output.proteinList));
-        mzList = obj.output.mzList(matchedRows,1);
+
+        mzList = obj.output.mzList;
+        tempList = [];
+        for j = 1:length(mzList)
+            tempMZ = str2num(cell2mat(obj.output.mzList(j)));
+            tempList = [tempList;tempMZ];
+        end
+        mzList = tempList(matchedRows,1);
         scanData = double(obj.output.scanData);
     case 'All'
         clc
@@ -106,9 +113,9 @@ switch proteinSelection
         obj.output.annotations = [];
         for j = 1:length(mzList)
             peakMatch = []; 
-            maxDev = ppmDeviation(str2num(mzList{j}),obj.settings.MS1Tolerance);
-            peakMatch = find(scanData(:,1) > str2num(mzList{j})-maxDev & ...
-                scanData(:,1) < str2num(mzList{j})+maxDev);
+            maxDev = ppmDeviation(mzList(j),obj.settings.MS1Tolerance);
+            peakMatch = find(scanData(:,1) > mzList(j)-maxDev & ...
+                scanData(:,1) < mzList(j)+maxDev);
             if ~isempty(peakMatch)
                if numel(peakMatch) > 1
                    diff = abs(scanData(peakMatch,1)-mzList(j));

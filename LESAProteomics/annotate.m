@@ -14,10 +14,12 @@ classdef annotate
             clc
             reportData = readReport(obj);
             obj.output.reportData = reportData;
+            proteinList = [];
             proteinList = reportData(2:end,2);
             decoys = find(contains(proteinList,'_REVERSED'));
+            decoys = decoys+1;
             reportData(decoys,:) = [];
-            
+            mzList = []; 
             mzList = reportData(2:end,14);
             proteinList = reportData(2:end,2);
                         
@@ -32,15 +34,31 @@ classdef annotate
 
             obj.output.mzList = mzList(mzIndex,1);
             obj.output.proteinList = proteinList(mzIndex,1);
-            raw2mzxml(obj);
+            fileType = questdlg('File type','Select file type',...
+                '.RAW','.mzXML','.RAW');
+            disp(fileType);
+            switch fileType
+                case '.RAW'
+                    raw2mzxml(obj);
+                case '.mzXML'
+                    selectMZXML(obj);
+                otherwise
+                    return
+            end
+            
             fileName = fileList{fileIndex};
             extensionIndex = find(fileName=='.');
             obj.output.MS1File = fileName(1:extensionIndex-1);
             obj.output.mzXMLFile = [obj.folder.identification '\data\' fileName(1:extensionIndex-1) '.mzXML'];
-            scanPeakList = mzxml2peaks(mzxmlread(obj.output.mzXMLFile));
-            bpIntensity = cellfun(@(x) max(x(:,2)),scanPeakList);
-            maxIndex = find(bpIntensity==max(bpIntensity));  
-            obj.output.scanData = cell2mat(scanPeakList(maxIndex,1));
+            if isequal(fileType,'.RAW')
+                scanPeakList = mzxml2peaks(mzxmlread(obj.output.mzXMLFile));
+                bpIntensity = cellfun(@(x) max(x(:,2)),scanPeakList);
+                maxIndex = find(bpIntensity==max(bpIntensity));  
+                obj.output.scanData = cell2mat(scanPeakList(maxIndex,1));
+            elseif isequal(fileType,'.mzXML')
+                scanPeakList = cell2mat(mzxml2peaks(mzxmlread(obj.output.mzXMLFile)));
+                obj.output.scanData = mspeaks(scanPeakList(:,1),scanPeakList(:,2));
+            end
         end
         
         function obj = annotateMS1(obj)           
