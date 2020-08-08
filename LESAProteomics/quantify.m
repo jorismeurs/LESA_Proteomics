@@ -122,16 +122,39 @@ classdef quantify
         end
         
         function obj = getMS1Peaks(obj)
+            if isempty(obj.settings.minMZ)
+                obj.settings.minMZ = input('Minimum m/z scan range: ');
+            end
+            if isempty(obj.settings.maxMZ)
+                obj.settings.maxMZ = input('Maximum m/z scan range: ');
+            end
+            binSize = -8e-8;
+            %----------------From Spectral Analysis -----------------
+            CMZ = 1/sqrt(minMZ):binSize:1/sqrt(maxMZ)+binSize;
+            CMZ = ones(size(CMZ))./(CMZ.^2);
+            %--------------------------------------------------------
+            
+            
             obj.output.MS1Data.totIonCurrent = [];
             obj.data.peakList = [];
             for j = 1:length(obj.data.fileLocation)
-               msStruct = mzxmlread(obj.data.fileLocation{j},'Level',1);
-               totIonCurrent = [msStruct.scan.totIonCurrent]';
-               maxTIC = find(totIonCurrent==(max(totIonCurrent)));
-               maxScan = msStruct.scan(maxTIC).peaks.mz;
-               obj.output.MS1Data.totIonCurrent(j,1) = msStruct.scan(maxTIC).totIonCurrent;
-               tempMZ = maxScan(1:2:end);
-               tempInt = maxScan(2:2:end);
+               msData = mzxml2peaks(mzxmlread(obj.data.fileLocation{j},'Level',1));
+               filteredData = [];
+               for n = 1:length(filteredData)
+                  tempData = cell2mat(msData(n));
+                  [mz,idx] = unique(tempData(:,1));
+                  int = tempData(idx,2);
+                  filteredData{n,1} = [mz,int];
+               end
+               interpolatedData = [];
+               fun  =@(x) interp1(x(:,1),x(:,2),CMZ,'linear');
+               interpolatedData = cellfun(fun,filteredData,'UniformOutput',false);
+               interpolatedData = cell2mat(interpolatedData);
+               averageSpectrum = mean(interpolatedData,1);
+               
+               obj.output.MS1Data.totIonCurrent(j,1) = sum(averageSpectrum);
+               tempMZ = CMZ';
+               tempInt = averageSpectrum';
                [tempMZ,mzIDX] = unique(tempMZ);
                tempInt = tempInt(mzIDX,1);
                obj.data.peakList{j,1} = mspeaks(tempMZ,tempInt,...
