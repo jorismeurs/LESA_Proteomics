@@ -88,9 +88,10 @@ classdef annotate
            mgfList = reportData(2:end,10);
            scanList = reportData(2:end,11);
            mzList = reportData(2:end,14);
+           precursorCharge = reportData(2:end,16);
            clc
            for j = 1:length(proteinList)
-               fprintf('(%d) %s | %s (m/z %s) \n',j,proteinList{j},sequenceList{j},mzList{j});
+               fprintf('(%d) %s | %s (m/z %s %s) \n',j,proteinList{j},sequenceList{j},mzList{j},precursorCharge{j});
            end
            PSMindex = input('Select PSM for annotation:     ');
            mgfLocation = fullfile(obj.folder.identification,'data',mgfList{PSMindex});
@@ -101,7 +102,7 @@ classdef annotate
            obj.output.scanIndex = PSMindex;
            
            peptideScans = obj.output.reportData(2:end,11);
-           precursorCharge = obj.output.reportData(2:end,15);
+           precursorCharge = obj.output.reportData(2:end,16);
            peptideSequence = obj.output.reportData(2:end,3);
           
            % Annotate fragment ions

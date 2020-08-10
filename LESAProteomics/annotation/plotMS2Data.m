@@ -1,12 +1,15 @@
 function obj = plotMS2Data(obj,scanData)
 
 if obj.settings.removePrecursor == true
-    charge = obj.output.peptideCharge;
-    charge = str2double(charge(1));
+    charge = str2double(obj.output.peptideCharge(1));
     mz = calculateMZ(obj.output.peptideSequence,charge);
     maxDev = ppmDeviation(mz,obj.settings.MS1Tolerance);
-    idx = find(scanData(:,1) > mz-maxDev & scanData(:,1) < mz+maxDev);
-    scanData(idx,:) = [];
+    try
+        idx = find(scanData(:,1) > mz-maxDev & scanData(:,1) < mz+maxDev);
+        scanData(idx,:) = [];
+    catch
+        disp('Precursor not found');
+    end
 end
 
 stem(scanData(:,1),scanData(:,2),'Color',repmat(0.5,1,3),'Marker','none');
