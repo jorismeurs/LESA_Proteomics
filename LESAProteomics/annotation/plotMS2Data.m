@@ -1,5 +1,14 @@
 function obj = plotMS2Data(obj,scanData)
 
+if obj.settings.removePrecursor == true
+    charge = obj.output.peptideCharge;
+    charge = str2double(charge(1));
+    mz = calculateMZ(obj.output.peptideSequence,charge);
+    maxDev = ppmDeviation(mz,obj.settings.MS1Tolerance);
+    idx = find(scanData(:,1) > mz-maxDev & scanData(:,1) < mz+maxDev);
+    scanData(idx,:) = [];
+end
+
 stem(scanData(:,1),scanData(:,2),'Color',repmat(0.5,1,3),'Marker','none');
 xlim([min(scanData(:,1))-10 max(scanData(:,1))+10]);
 ylim([0 max(scanData(:,2))+0.1*max(scanData(:,2))]); 
@@ -239,3 +248,44 @@ if obj.settings.neutralLoss == true
 end
 
 set(gcf,'Position',[50,50,1300,600]);
+
+end
+
+function mz = calculateMZ(sequence,charge)
+
+aminoAcidMassList = {
+    'A' 71.037114
+    'R' 156.101111
+    'N' 114.042927
+    'D' 115.026943
+    'C' 103.009185
+    'E' 129.042593
+    'Q' 128.058578
+    'G' 57.021464
+    'H' 137.058912
+    'I' 113.084064
+    'L' 113.084064
+    'K' 128.094963
+    'M' 131.040485
+    'F' 147.068414
+    'P' 97.052764
+    'S' 87.032028
+    'T' 101.047679
+    'U' 150.95363
+    'W' 186.079313
+    'Y' 163.06332	
+    'V' 99.068414
+    };
+mz = [];
+for n = 1:numel(sequence)
+   idx = find(ismember(aminoAcidMassList(:,1),sequence(n))==true);
+   mz = [mz;aminoAcidMassList{idx,2}];
+end
+mz = sum(mz);
+
+mz = mz+18.010565;
+
+mz = (mz+(charge*1.007825)-(charge*0.00054858))/charge;
+
+
+end
