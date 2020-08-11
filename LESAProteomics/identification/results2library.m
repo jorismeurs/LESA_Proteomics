@@ -1,7 +1,7 @@
 function obj = results2library(obj)
 
 % Open report file
-reportData = readReport(obj);
+reportData = readReport(this);
 
 % Filter PSM
 scores = reportData(2:end,24);
@@ -9,7 +9,7 @@ numericScores = [];
 for j = 1:length(scores)
   numericScores = [numericScores;str2num(char(scores(j,1)))];
 end
-removeIDX = find(numericScores(:,1)<obj.settings.minPSMScore | isnan(numericScores(:,1)));
+removeIDX = find(numericScores(:,1)<this.settings.minPSMScore | isnan(numericScores(:,1)));
 removeIDX = removeIDX+1;
 reportData(removeIDX,:) = [];
 
@@ -35,7 +35,7 @@ scanList = reportData(2:end,11);
 precursorCharge = reportData(2:end,15);
 
 % Collect peptide spectra
-cd(obj.folder.identification);
+cd(this.folder.identification);
 count = 0;
 tempLibrary  = [];
 for j = 1:length(mgfList)
@@ -45,19 +45,19 @@ for j = 1:length(mgfList)
         scanIndex = find(strcmp(titleList,scanList{n}));
         if ~isempty(scanIndex)
            count = count+1; 
-           tempLibrary{j,1}  = sequenceList{n};
-           tempLibrary{j,2}  = proteinList{n};
-           tempLibrary{j,3}  = precursorCharge{n};
-           tempLibrary{j,4}  = MGFStruct.scan(scanIndex).scanData;
+           tempLibrary{count,1}  = sequenceList{n};
+           tempLibrary{count,2}  = proteinList{n};
+           tempLibrary{count,3}  = precursorCharge{n};
+           tempLibrary{count,4}  = MGFStruct.scan(scanIndex).scanData;
         end
     end
 end
 
 % Retrieve most intense spectrum for unique PSMs
-sequence = tempLibrary{j,1};
-proteins = tempLibrary{j,2};
-charge = tempLibrary{j,3};
-scanData = tempLibrary{j,4};
+sequence = tempLibrary(:,1);
+proteins = tempLibrary(:,2);
+charge = tempLibrary(:,3);
+scanData = tempLibrary(:,4);
 
 C = unique(sequence);
 library = [];
@@ -78,7 +78,7 @@ for j = 1:length(C)
         library(count).sequence = C{j,1};
         library(count).protein = proteins{sequenceRow(1),1};
         library(count).z = charges{n};
-        library(count).spectrum = scanData(sequenceRow(chargeIndex(maxTIC),1));
+        library(count).spectrum = cell2mat(scanData(sequenceRow(chargeIndex(maxTIC),1)));
     end
 end
 
