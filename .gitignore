@@ -227,3 +227,5 @@ LESAProteomics/identification/PeptideShaker-1.16.45/resources/matches/A__B__1_id
 *.mat
 *.index
 LESAProteomics/Quant.m
+LESAProteomics/Plot.m
+LESAProteomics/Quant_new.m
