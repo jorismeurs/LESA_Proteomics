@@ -1,7 +1,7 @@
 function obj = results2library(obj)
 
 % Open report file
-reportData = readReport(this);
+reportData = readReport(obj);
 
 % Filter PSM
 scores = reportData(2:end,24);
@@ -9,7 +9,7 @@ numericScores = [];
 for j = 1:length(scores)
   numericScores = [numericScores;str2num(char(scores(j,1)))];
 end
-removeIDX = find(numericScores(:,1)<this.settings.minPSMScore | isnan(numericScores(:,1)));
+removeIDX = find(numericScores(:,1)<obj.settings.minPSMScore | isnan(numericScores(:,1)));
 removeIDX = removeIDX+1;
 reportData(removeIDX,:) = [];
 
@@ -35,7 +35,7 @@ scanList = reportData(2:end,11);
 precursorCharge = reportData(2:end,15);
 
 % Collect peptide spectra
-cd(this.folder.identification);
+cd(obj.folder.identification);
 count = 0;
 tempLibrary  = [];
 for j = 1:length(mgfList)
