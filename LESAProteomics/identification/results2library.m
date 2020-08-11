@@ -13,6 +13,20 @@ removeIDX = find(numericScores(:,1)<obj.settings.minPSMScore | isnan(numericScor
 removeIDX = removeIDX+1;
 reportData(removeIDX,:) = [];
 
+% Remove PSMs without identification charge
+r = [];
+r = find(isempty(reportData(:,15)));
+if ~isempty(r)
+    reportData(r,:) = [];
+end
+
+% Remove decoy PSMs
+r = [];
+r = find(contains(reportData(:,2),'_REVERSED'));
+if ~isempty(r)
+    reportData(r,:) = [];
+end
+
 % Get files and spectrum titles
 sequenceList = reportData(2:end,3);
 proteinList = reportData(2:end,2);
@@ -20,10 +34,10 @@ mgfList = unique(reportData(2:end,10));
 scanList = reportData(2:end,11);
 precursorCharge = reportData(2:end,15);
 
-% Collect peptide spectra and store as .mat
+% Collect peptide spectra
 cd(obj.folder.identification);
 count = 0;
-library  = [];
+tempLibrary  = [];
 for j = 1:length(mgfList)
     MGFStruct = readMGF(mgfList{j});
     titleList = {MGFStruct.scan.scanName}';
@@ -31,13 +45,47 @@ for j = 1:length(mgfList)
         scanIndex = find(strcmp(titleList,scanList{n}));
         if ~isempty(scanIndex)
            count = count+1; 
-           library(count).sequence = sequenceList{n};
-           library(count).protein = proteinList{n};
-           library(count).z = precursorCharge{n};
-           library(count).spectrum = MGFStruct.scan(scanIndex).scanData;
+           tempLibrary{j,1}  = sequenceList{n};
+           tempLibrary{j,2}  = proteinList{n};
+           tempLibrary{j,3}  = precursorCharge{n};
+           tempLibrary{j,4}  = MGFStruct.scan(scanIndex).scanData;
         end
     end
 end
+
+% Retrieve most intense spectrum for unique PSMs
+sequence = tempLibrary{j,1};
+proteins = tempLibrary{j,2};
+charge = tempLibrary{j,3};
+scanData = tempLibrary{j,4};
+
+C = unique(sequence);
+library = [];
+count = 0;
+for j = 1:length(C)
+    sequenceRow = find(strcmp(sequence,C{j,1}));
+    matchCharge = charge(sequenceRow,1);
+    charges = unique(matchCharge);
+    for n = 1:numel(charges)
+        count = count+1;
+        chargeIndex = find(strcmp(matchCharge,charges{n}));
+        tempTIC = [];
+        for k = 1:numel(chargeIndex)
+            tempSpectrum = cell2mat(scanData(sequenceRow(chargeIndex,1)));
+            tempTIC = sum(tempSpectrum(:,1));
+        end
+        maxTIC = find(tempTIC==max(tempTIC));
+        library(count).sequence = C{j,1};
+        library(count).protein = proteins{sequenceRow(1),1};
+        library(count).z = charges{n};
+        library(count).spectrum = scanData(sequenceRow(chargeIndex(maxTIC),1));
+    end
+end
+
+% Filter out interfering ions
+
+
+% Store library as .mat 
 obj.output.library = library;
 cd([obj.folder.identification '\library']);
 save('library.mat','library');
@@ -48,12 +96,11 @@ end
 % function filteredSpectrum = retrieveAnnotations(sequence,scanData)
 %     [yseries,bseries] = fragmentSequence(sequence);
 %     annotatedIons = [];
-%     tolerance = 20; % ppm
+%     tolerance = obj.settings.MS2Tolerance;
 %     
 %     yions = yseries.mz;
 %     for j = 1:length(yions)
-%         maxDev = ppmDeviation(yions(j),tolerance);
-%         idx = find(scanData(:,1) > yions(j)-maxDev & scanData(:,1) < yions(j)+maxDev);
+%         idx = find(scanData(:,1) > yions(j)-tolerance & scanData(:,1) < yions(j)+tolerance);
 %         if ~isempty(idx)
 %            if numel(idx) > 1
 %                diff = abs(scanData(idx,1)-yions(j));
@@ -69,8 +116,7 @@ end
 %     
 %     bions = bseries.mz;
 %     for j = 1:length(bions)
-%         maxDev = ppmDeviation(bions(j),tolerance);
-%         idx = find(scanData(:,1) > bions(j)-maxDev & scanData(:,1) < bions(j)+maxDev);
+%         idx = find(scanData(:,1) > bions(j)-tolerance & scanData(:,1) < bions(j)+tolerance);
 %         if ~isempty(idx)
 %            if numel(idx) > 1
 %                diff = abs(scanData(idx,1)-bions(j));
@@ -84,73 +130,7 @@ end
 %         end
 %     end
 %     
-%     yWater = yseries.waterLoss;
-%     for j = 1:length(yWater)
-%         maxDev = ppmDeviation(yWater(j),tolerance);
-%         idx = find(scanData(:,1) > yWater(j)-maxDev & scanData(:,1) < yWater(j)+maxDev);
-%         if ~isempty(idx)
-%            if numel(idx) > 1
-%                diff = abs(scanData(idx,1)-yWater(j));
-%                min_diff = find(diff==min(diff));
-%                annotatedIons = [annotatedIons;idx(min_diff)];
-%            else
-%                annotatedIons = [annotatedIons;idx];
-%            end
-%         else
-%            continue 
-%         end
-%     end
-%     
-%     yAmmonia = yseries.ammoniaLoss;
-%     for j = 1:length(yAmmonia)
-%         maxDev = ppmDeviation(yAmmonia(j),tolerance);
-%         idx = find(scanData(:,1) > yAmmonia(j)-maxDev & scanData(:,1) < yAmmonia(j)+maxDev);
-%         if ~isempty(idx)
-%            if numel(idx) > 1
-%                diff = abs(scanData(idx,1)-yAmmonia(j));
-%                min_diff = find(diff==min(diff));
-%                annotatedIons = [annotatedIons;idx(min_diff)];
-%            else
-%                annotatedIons = [annotatedIons;idx];
-%            end
-%         else
-%            continue 
-%         end
-%     end
-%     
-%     bWater = bseries.waterLoss;
-%     for j = 1:length(bWater)
-%         maxDev = ppmDeviation(bWater(j),tolerance);
-%         idx = find(scanData(:,1) > bWater(j)-maxDev & scanData(:,1) < bWater(j)+maxDev);
-%         if ~isempty(idx)
-%            if numel(idx) > 1
-%                diff = abs(scanData(idx,1)-bWater(j));
-%                min_diff = find(diff==min(diff));
-%                annotatedIons = [annotatedIons;idx(min_diff)];
-%            else
-%                annotatedIons = [annotatedIons;idx];
-%            end
-%         else
-%            continue 
-%         end
-%     end
-%     
-%     bAmmonia = yseries.ammoniaLoss;
-%     for j = 1:length(bAmmonia)
-%         maxDev = ppmDeviation(bAmmonia(j),tolerance);
-%         idx = find(scanData(:,1) > bAmmonia(j)-maxDev & scanData(:,1) < bAmmonia(j)+maxDev);
-%         if ~isempty(idx)
-%            if numel(idx) > 1
-%                diff = abs(scanData(idx,1)-bAmmonia(j));
-%                min_diff = find(diff==min(diff));
-%                annotatedIons = [annotatedIons;idx(min_diff)];
-%            else
-%                annotatedIons = [annotatedIons;idx];
-%            end
-%         else
-%            continue 
-%         end
-%     end
+%    
 %     
 %     filteredSpectrum = scanData(annotatedIons,:);
 % end
