@@ -82,8 +82,19 @@ for j = 1:length(C)
     end
 end
 
-% Filter out interfering ions
+% Copy search files to library folder
+cd([obj.folder.identification '\data']);
+try
+    delete *.cui
+    delete *.mzXML
+catch
+    
+end
+cd([obj.folder.library '\sample_files']);
+delete *.*
+movefile('*.mgf',[obj.folder.library '\sample_files']);
 
+% Filter out interfering ions
 
 % Store library as .mat 
 obj.output.library = library;
