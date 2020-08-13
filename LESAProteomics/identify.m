@@ -192,6 +192,10 @@ classdef identify
             end
             obj.output.libraryID = identificationData; 
         end
+        
+        function obj = libraryReport(obj)
+            
+        end
     end
     
 end

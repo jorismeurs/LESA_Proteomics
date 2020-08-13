@@ -1,13 +1,8 @@
 function R = cosineCorrelation(reference,sample)
 
-% Original developer: R.G. Bettinardi
-% Ruggero G. Bettinardi (2020). getCosineSimilarity(x,y) (https://www.mathworks.com/matlabcentral/fileexchange/62978-getcosinesimilarity-x-y), MATLAB Central File Exchange. Retrieved July 1, 2020.
+% As described by Tabb, D. L., MacCoss, M. J., Wu, C. C., Anderson, S. D., & Yates, J. R. (2003). Similarity among Tandem Mass Spectra from Proteomic Experiments:  Detection, Significance, and Utility. Analytical Chemistry, 75(10), 2470–2477. doi:10.1021/ac026424o 
 
-xy   = dot(reference,sample);
-nx   = norm(reference);
-ny   = norm(sample);
-nxny = nx*ny;
-R   = xy/nxny;
+R = (sum(reference.*sample))/sqrt(sumsqr(reference)*sumsqr(sample));
 
 end
 
