@@ -67,6 +67,9 @@ for j = 1:length(C)
     matchCharge = charge(sequenceRow,1);
     charges = unique(matchCharge);
     for n = 1:numel(charges)
+        if isempty(charges{n})
+           continue 
+        end
         count = count+1;
         chargeIndex = find(strcmp(matchCharge,charges{n}));
         tempTIC = [];
@@ -97,7 +100,7 @@ movefile('*.mgf',[obj.folder.library '\sample_files']);
 % Filter out interfering ions
 for p = 1:length(library)
     filteredSpectrum = filterLibrary(library(p).sequence,library(p).spectrum);
-    library(p).spectrum = filteredSpectrum
+    library(p).spectrum = filteredSpectrum;
 end
 
 % Store library as .mat 
