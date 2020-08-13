@@ -95,6 +95,10 @@ delete *.*
 movefile('*.mgf',[obj.folder.library '\sample_files']);
 
 % Filter out interfering ions
+for p = 1:length(library)
+    filteredSpectrum = filterLibrary(library(p).sequence,library(p).spectrum);
+    library(p).spectrum = filteredSpectrum
+end
 
 % Store library as .mat 
 obj.output.library = library;
@@ -104,44 +108,41 @@ cd(obj.folder.mainFolder);
 
 end
 
-% function filteredSpectrum = retrieveAnnotations(sequence,scanData)
-%     [yseries,bseries] = fragmentSequence(sequence);
-%     annotatedIons = [];
-%     tolerance = obj.settings.MS2Tolerance;
-%     
-%     yions = yseries.mz;
-%     for j = 1:length(yions)
-%         idx = find(scanData(:,1) > yions(j)-tolerance & scanData(:,1) < yions(j)+tolerance);
-%         if ~isempty(idx)
-%            if numel(idx) > 1
-%                diff = abs(scanData(idx,1)-yions(j));
-%                min_diff = find(diff==min(diff));
-%                annotatedIons = [annotatedIons;idx(min_diff)];
-%            else
-%                annotatedIons = [annotatedIons;idx];
-%            end
-%         else
-%            continue 
-%         end
-%     end
-%     
-%     bions = bseries.mz;
-%     for j = 1:length(bions)
-%         idx = find(scanData(:,1) > bions(j)-tolerance & scanData(:,1) < bions(j)+tolerance);
-%         if ~isempty(idx)
-%            if numel(idx) > 1
-%                diff = abs(scanData(idx,1)-bions(j));
-%                min_diff = find(diff==min(diff));
-%                annotatedIons = [annotatedIons;idx(min_diff)];
-%            else
-%                annotatedIons = [annotatedIons;idx];
-%            end
-%         else
-%            continue 
-%         end
-%     end
-%     
-%    
-%     
-%     filteredSpectrum = scanData(annotatedIons,:);
-% end
+function filteredSpectrum = filterLibrary(sequence,scanData)
+    [yseries,bseries] = fragmentSequence(sequence);
+    annotatedIons = [];
+    tolerance = obj.settings.MS2Tolerance;
+    
+    yions = [yseries.mz]';
+    for j = 1:length(yions)
+        idx = find(scanData(:,1) > yions(j)-tolerance & scanData(:,1) < yions(j)+tolerance);
+        if ~isempty(idx)
+           if numel(idx) > 1
+               diff = abs(scanData(idx,1)-yions(j));
+               min_diff = find(diff==min(diff));
+               annotatedIons = [annotatedIons;idx(min_diff)];
+           else
+               annotatedIons = [annotatedIons;idx];
+           end
+        else
+           continue 
+        end
+    end
+    
+    bions = [bseries.mz]';
+    for j = 1:length(bions)
+        idx = find(scanData(:,1) > bions(j)-tolerance & scanData(:,1) < bions(j)+tolerance);
+        if ~isempty(idx)
+           if numel(idx) > 1
+               diff = abs(scanData(idx,1)-bions(j));
+               min_diff = find(diff==min(diff));
+               annotatedIons = [annotatedIons;idx(min_diff)];
+           else
+               annotatedIons = [annotatedIons;idx];
+           end
+        else
+           continue 
+        end
+    end   
+    filteredSpectrum = scanData(annotatedIons,:);
+end
