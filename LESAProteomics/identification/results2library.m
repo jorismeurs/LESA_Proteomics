@@ -93,13 +93,11 @@ try
 catch
     
 end
-cd([obj.folder.library '\sample_files']);
-delete *.*
-movefile('*.mgf',[obj.folder.library '\sample_files']);
+copyfile('*.mgf',[obj.folder.library '\sample_files']);
 
 % Filter out interfering ions
 for p = 1:length(library)
-    filteredSpectrum = filterLibrary(library(p).sequence,library(p).spectrum);
+    filteredSpectrum = filterLibrary(obj,library(p).sequence,library(p).spectrum);
     library(p).spectrum = filteredSpectrum;
 end
 
@@ -111,7 +109,7 @@ cd(obj.folder.mainFolder);
 
 end
 
-function filteredSpectrum = filterLibrary(sequence,scanData)
+function filteredSpectrum = filterLibrary(obj,sequence,scanData)
     [yseries,bseries] = fragmentSequence(sequence);
     annotatedIons = [];
     tolerance = obj.settings.MS2Tolerance;
