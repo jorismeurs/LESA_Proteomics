@@ -96,9 +96,13 @@ end
 copyfile('*.mgf',[obj.folder.library '\sample_files']);
 
 % Filter out interfering ions
+count = 0;
 for p = 1:length(library)
     filteredSpectrum = filterLibrary(obj,library(p).sequence,library(p).spectrum);
-    library(p).spectrum = filteredSpectrum;
+    if size(filteredSpectrum,1) >= 5
+        count = count+1;
+        library(count).spectrum = filteredSpectrum;
+    end
 end
 
 % Store library as .mat 

@@ -93,8 +93,8 @@ for j = 1:length(BIons)
 end
 hold off
 
-%set(gcf,'Position',[50,50,1300,600]);
-set(gcf,'Position',[200,80,600,600]);
+set(gcf,'Position',[50,50,1300,600]);
+%set(gcf,'Position',[200,80,600,600]);
 ytick = get(gca,'YTickLabel');
 newLabels = [];
 for j = 1:length(ytick)
