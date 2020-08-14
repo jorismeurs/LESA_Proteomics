@@ -54,6 +54,7 @@ for j = 1:length(MGFStruct.scan)
             ID(count).sample = sampleSpectrum;
             ID(count).reference = referenceSpectrum;            
             ID(count).R = R;
+            ID(count).originalSpectrum = scanData;
        else
            continue
        end

@@ -142,7 +142,7 @@ classdef annotate
            obj.output.bIons = bseries;
            
            % Plot data
-           obj = plotLibraryData(obj,tempIDs(matchIndex).reference,tempIDs(matchIndex).sample,tempSequence{matchIndex},tempCharge{matchIndex});
+           obj = plotLibraryData(obj,tempIDs(matchIndex).reference,tempIDs(matchIndex).originalSpectrum,tempSequence{matchIndex},tempCharge{matchIndex},tempIDs(matchIndex).R);
            cd(obj.folder.export);
            saveas(gcf,[tempSequence{matchIndex,1} '_library' obj.settings.imageFormat]);
            cd(obj.folder.mainFolder);
