@@ -1,6 +1,6 @@
 function obj = plotMS2Data(obj,scanData)
 
-if obj.settings.removePrecursor == true
+if obj.settings.precursorRemoval == true
     charge = str2double(obj.output.peptideCharge(1));
     mz = calculateMZ(obj.output.peptideSequence,charge);
     maxDev = ppmDeviation(mz,obj.settings.MS1Tolerance);
