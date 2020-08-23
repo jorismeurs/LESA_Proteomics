@@ -27,6 +27,20 @@ if ~isempty(r)
     reportData(r,:) = [];
 end
 
+% Remove PSMs which are not in charge range
+r = [];
+includedCharges = obj.settings.minCharge:1:obj.settings.maxCharge;
+for j = 1:length(includedCharges)
+   chargeElement = [num2str(includedCharges(j)) '+'];
+   chargeIdx = find(strcmp(reportData(:,15),chargeElement));
+   if ~isempty(chargeIdx)
+       r = [r;chargeIdx];
+   end
+end
+if ~isempty(r)
+   reportData = reportData(r,:); 
+end
+
 % Get files and spectrum titles
 sequenceList = reportData(2:end,3);
 proteinList = reportData(2:end,2);

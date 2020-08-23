@@ -138,6 +138,7 @@ classdef annotate
             % Annotate fragment ions
            obj.output.peptideSequence = char(tempSequence(matchIndex));
            [yseries,bseries] = fragmentSequence(char(tempSequence(matchIndex)));
+           obj.output.yIons = []; obj.output.bIons = [];
            obj.output.yIons = yseries;
            obj.output.bIons = bseries;
            

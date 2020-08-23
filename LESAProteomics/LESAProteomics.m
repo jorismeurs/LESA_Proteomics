@@ -1,7 +1,7 @@
 classdef LESAProteomics < visualise & identify & annotate & quantify
     
     properties (Constant = true)
-        version = '0.8.1';
+        version = '0.8.2';
         developer = 'Joris Meurs, MSc';
     end
     
@@ -45,6 +45,8 @@ classdef LESAProteomics < visualise & identify & annotate & quantify
             obj.settings.fontSize = 11;
             obj.settings.minMZ = [];
             obj.settings.maxMZ = [];
+            obj.settings.minCharge = 2;
+            obj.settings.maxCharge = 4;
             
             obj.settings.precursorRemoval = true;
             obj.settings.MS1Tolerance = 10; % ppm
