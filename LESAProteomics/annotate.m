@@ -134,16 +134,9 @@ classdef annotate
                fprintf('(%d) %s | %s \n',j,tempProtein{j,1},tempSequence{j,1});
            end
            matchIndex = input('Select match for annotation:     ');
-            
-            % Annotate fragment ions
-           obj.output.peptideSequence = char(tempSequence(matchIndex));
-           [yseries,bseries] = fragmentSequence(char(tempSequence(matchIndex)));
-           obj.output.yIons = []; obj.output.bIons = [];
-           obj.output.yIons = yseries;
-           obj.output.bIons = bseries;
            
            % Plot data
-           obj = plotLibraryData(obj,tempIDs(matchIndex).reference,tempIDs(matchIndex).originalSpectrum,tempSequence{matchIndex},tempCharge{matchIndex},tempIDs(matchIndex).R);
+           obj = plotLibraryData(obj,tempIDs(matchIndex).reference,tempIDs(matchIndex).sample,tempIDs(matchIndex).originalSpectrum,tempIDs(matchIndex).fragmentIons,tempSequence{matchIndex},tempCharge{matchIndex},tempIDs(matchIndex).R);
            cd(obj.folder.export);
            saveas(gcf,[tempSequence{matchIndex,1} '_library' obj.settings.imageFormat]);
            cd(obj.folder.mainFolder);

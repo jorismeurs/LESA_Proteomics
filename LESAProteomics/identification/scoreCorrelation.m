@@ -18,9 +18,9 @@ for j = 1:length(MGFStruct.scan)
        end
        intensityMatrix = zeros(length(libraryMZ),2);
        sampleMZ = [];
-       for k = 1:length(libraryMZ)                  
-           idx = find(scanData(:,1) > libraryMZ(k)-obj.settings.MS2Tolerance & ...
-               scanData(:,1) < libraryMZ(k)+obj.settings.MS2Tolerance);
+       for k = 1:length(libraryMZ) 
+           idx = find(scanData(:,1) > libraryMZ(k,1)-obj.settings.MS2Tolerance & ...
+               scanData(:,1) < libraryMZ(k,1)+obj.settings.MS2Tolerance);
            if ~isempty(idx)
                if numel(idx) > 1
                    diff = libraryMZ(k)-scanData(idx,1);
@@ -52,7 +52,8 @@ for j = 1:length(MGFStruct.scan)
             ID(count).sequence = libraryData(n).sequence;
             ID(count).z = libraryData(n).z;
             ID(count).sample = sampleSpectrum;
-            ID(count).reference = referenceSpectrum;            
+            ID(count).reference = referenceSpectrum; 
+            ID(count).fragmentIons = libraryData(n).fragmentIon;
             ID(count).R = R;
             ID(count).originalSpectrum = scanData;
        else

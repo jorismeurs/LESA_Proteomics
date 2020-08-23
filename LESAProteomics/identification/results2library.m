@@ -112,10 +112,11 @@ copyfile('*.mgf',[obj.folder.library '\sample_files']);
 % Filter out interfering ions
 count = 0;
 for p = 1:length(library)
-    filteredSpectrum = filterLibrary(obj,library(p).sequence,library(p).spectrum);
+    [filteredSpectrum,fragmentIon] = filterLibrary(obj,library(p).sequence,library(p).spectrum);
     if size(filteredSpectrum,1) >= 5
         count = count+1;
         library(count).spectrum = filteredSpectrum;
+        library(count).fragmentIon = fragmentIon;
     end
 end
 
@@ -127,9 +128,9 @@ cd(obj.folder.mainFolder);
 
 end
 
-function filteredSpectrum = filterLibrary(obj,sequence,scanData)
+function [filteredSpectrum,fragmentIon] = filterLibrary(obj,sequence,scanData)
     [yseries,bseries] = fragmentSequence(sequence);
-    annotatedIons = [];
+    annotatedIons = []; fragmentIon = [];
     tolerance = obj.settings.MS2Tolerance;
     
     yions = [yseries.mz]';
@@ -140,8 +141,10 @@ function filteredSpectrum = filterLibrary(obj,sequence,scanData)
                diff = abs(scanData(idx,1)-yions(j));
                min_diff = find(diff==min(diff));
                annotatedIons = [annotatedIons;idx(min_diff)];
+               fragmentIon = [fragmentIon;cellstr(['y' num2str(j)])];
            else
                annotatedIons = [annotatedIons;idx];
+               fragmentIon = [fragmentIon;cellstr(['y' num2str(j)])];
            end
         else
            continue 
@@ -156,8 +159,10 @@ function filteredSpectrum = filterLibrary(obj,sequence,scanData)
                diff = abs(scanData(idx,1)-bions(j));
                min_diff = find(diff==min(diff));
                annotatedIons = [annotatedIons;idx(min_diff)];
+               fragmentIon = [fragmentIon;cellstr(['b' num2str(j)])];
            else
                annotatedIons = [annotatedIons;idx];
+               fragmentIon = [fragmentIon;cellstr(['b' num2str(j)])];
            end
         else
            continue 
