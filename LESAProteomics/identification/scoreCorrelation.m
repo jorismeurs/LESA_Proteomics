@@ -40,6 +40,8 @@ for j = 1:length(MGFStruct.scan)
        end
        referenceSpectrum = [libraryMZ,intensityMatrix(:,2)];
        sampleSpectrum = [sampleMZ,intensityMatrix(:,1)];
+       
+       
        intensityMatrix(:,1) = (intensityMatrix(:,1).*100)./max(intensityMatrix(:,1));
        intensityMatrix(:,2) = (librarySpectrum(:,2).*100)./max(librarySpectrum(:,2));     
        if numel(find(intensityMatrix(:,1)==0)) > length(intensityMatrix(:,1))/2
