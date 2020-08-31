@@ -193,8 +193,64 @@ classdef identify
             obj.output.libraryID = identificationData; 
         end
         
-        function obj = libraryReport(obj)
+        function obj = library2inclusion(obj)
+            clc
+            headerNames = {'Mass [m/z]','Formula [M]','Species','CS [z]',...
+                'Polarity','Start [min]','End [min]','(N)CE','MSX ID','Comment'};
+            cd(obj.folder.library);
             
+            try
+                libraryData = load('library.mat');
+            catch 
+                error('Library file missing. Run <strong>generateLibraryFile<\strong>');
+            end
+            library = libraryData.library;
+            cd(obj.folder.mainFolder);
+            
+            for j = 1:length(library)
+               [mz(j,1),z(j,1)] = getMZ(library(j).sequence,library(j).z);               
+            end
+            polarity = repmat(cellstr('Positive'),length(mz),1);
+            try
+                startTime = input('Method start time (min):   ');
+            catch
+                startTime = 0;
+            end
+            try
+                endTime = input('Method end time (min):   ');
+            catch
+                endTime = 1;
+            end
+            try
+                collisionEnergy = input('Collision energy (NCE): ');
+            catch
+               collisionEnergy = 27; 
+            end
+            startTime = repmat(startTime,length(mz),1);
+            endTime = repmat(endTime,length(mz),1);
+            collisionEnergy = repmat(collisionEnergy,length(mz),1);
+            
+            outputExtension = '.csv';
+            outputName = ['InclusionList_' datestr(datetime('now'),'yyyymmdd_hhMMss')];
+            exportFile = [outputName outputExtension];
+            
+            fileID = fopen(exportFile,'w');
+            fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n',headerNames{1},headerNames{2},headerNames{3},...
+                headerNames{4},headerNames{5},headerNames{6},headerNames{7},headerNames{8},...
+                headerNames{9},headerNames{10});
+            for j = 1:length(mz)
+                fprintf(fileID,'%.5f,,,%d,%s,%d,%d,%d,,%s\n',mz(j),z(j),polarity{j},...
+                    startTime(j),endTime(j),collisionEnergy(j),library(j).sequence);
+            end
+            fclose(fileID);
+            fclose('all');
+%             csvwrite(exportFile,headerNames,'Sheet1','A1');
+%             csvwrite(exportFile,mz,'Sheet1','A2');
+%             csvwrite(exportFile,'Sheet1',z,'D2');
+%             csvwrite(exportFile,startTime,'Sheet1','E2');
+%             csvwrite(exportFile,endTime,'Sheet1','F2');
+%             csvwrite(exportFile,collisionEnergy,'Sheet1','G2');
+%             csvwrite(exportFile,{library.sequence}','I2');
         end
     end
     

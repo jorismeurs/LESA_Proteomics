@@ -1,4 +1,4 @@
-function mz = getMZ(sequence,charge)
+function [mz,z] = getMZ(sequence,charge)
 
 z = str2double(charge(1));
 aminoAcidMassList = {
