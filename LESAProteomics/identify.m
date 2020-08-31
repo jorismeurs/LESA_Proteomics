@@ -244,13 +244,6 @@ classdef identify
             end
             fclose(fileID);
             fclose('all');
-%             csvwrite(exportFile,headerNames,'Sheet1','A1');
-%             csvwrite(exportFile,mz,'Sheet1','A2');
-%             csvwrite(exportFile,'Sheet1',z,'D2');
-%             csvwrite(exportFile,startTime,'Sheet1','E2');
-%             csvwrite(exportFile,endTime,'Sheet1','F2');
-%             csvwrite(exportFile,collisionEnergy,'Sheet1','G2');
-%             csvwrite(exportFile,{library.sequence}','I2');
         end
     end
     
