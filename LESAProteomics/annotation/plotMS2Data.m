@@ -249,7 +249,7 @@ if obj.settings.neutralLoss == true
     end
     hold off
 end
-
+set(gca,'box','off');
 set(gcf,'Position',[50,50,1300,600]);
 
 end
