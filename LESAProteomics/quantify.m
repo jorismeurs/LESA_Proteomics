@@ -130,7 +130,7 @@ classdef quantify
             end
             binSize = -8e-8;
             %----------------From Spectral Analysis -----------------
-            CMZ = 1/sqrt(minMZ):binSize:1/sqrt(maxMZ)+binSize;
+            CMZ = 1/sqrt(obj.settings.minMZ):binSize:1/sqrt(obj.settings.maxMZ)+binSize;
             CMZ = ones(size(CMZ))./(CMZ.^2);
             %--------------------------------------------------------
             
