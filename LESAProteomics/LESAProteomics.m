@@ -55,6 +55,8 @@ classdef LESAProteomics < visualise & identify & annotate & quantify
             obj.settings.imageFormat = '.tif';
             obj.settings.neutralLoss = false;
             
+            obj.settings.fontSize = 9;
+            
             obj.folder.searchFolder = [obj.folder.identification '/SearchGUI-' obj.settings.SearchGUIVersion];
         end
     end
