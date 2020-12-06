@@ -140,8 +140,8 @@ classdef quantify
             for j = 1:length(obj.data.fileLocation)
                msData = mzxml2peaks(mzxmlread(obj.data.fileLocation{j},'Level',1));
                filteredData = [];
-               for n = 1:length(filteredData)
-                  tempData = cell2mat(msData(n));
+               for n = 1:length(msData)
+                  tempData = cell2mat(msData(n,1));
                   [mz,idx] = unique(tempData(:,1));
                   int = tempData(idx,2);
                   filteredData{n,1} = [mz,int];
