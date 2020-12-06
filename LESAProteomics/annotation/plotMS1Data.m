@@ -62,7 +62,7 @@ switch proteinSelection
                            val = randperm(1000);
                            offset = increaseVec(val(1))*max(scanData(:,2));
                            stem(scanData(peakMatch(min_diff),1),scanData(peakMatch(min_diff),2),...
-                               'Marker','none','Color',precursorColor);
+                               'Marker','none','Color',precursorColor,'LineWidth',obj.settings.width);
                            plot([scanData(peakMatch(min_diff),1) scanData(peakMatch(min_diff),1)],...
                                [scanData(peakMatch(min_diff),2) scanData(peakMatch(min_diff),2)+abs(offset)],...
                                '--','Color',repmat(0.1,1,3));
@@ -148,7 +148,7 @@ switch proteinSelection
                    obj.output.annotations = [obj.output.annotations;scanData(peakMatch,1),scanData(peakMatch,2)];
                    fprintf('m/z %.4f (%.2e) \n',scanData(peakMatch,1),scanData(peakMatch,2));
                    stem(scanData(peakMatch,1),scanData(peakMatch,2),...
-                       'Marker','none','Color',precursorColor); 
+                       'Marker','none','Color',precursorColor,'LineWidth',obj.settings.width); 
                    if scanData(peakMatch,2)/max(scanData(:,2)) < 0.05
                        increaseVec = linspace(0.3,0.8,1000);
                        val = randperm(1000);
