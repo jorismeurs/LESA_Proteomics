@@ -6,7 +6,7 @@ if isequal(fileName,0)
     return
 end
 fileLocation = fullfile(pathName,fileName);
-copyfile(fileLocation,[obj.folder.identification '/data'])
+%copyfile(fileLocation,[obj.folder.identification '/data'])
 
 
 end

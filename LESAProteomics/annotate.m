@@ -22,7 +22,7 @@ classdef annotate
             mzList = []; proteinList = []; chargeList = [];
             mzList = reportData(2:end,14);
             proteinList = reportData(2:end,2);
-            chargeList = reportData(2:end,15);
+            chargeList = reportData(2:end,16);
                         
             % Select file
             fileList = unique(reportData(2:end,10));
