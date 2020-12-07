@@ -3,9 +3,9 @@
  
 # System requirements
 - Windows 10
-- 8 GB RAM
+- 2 GB RAM
 - MATLAB R2017a
-- >20 GB hard disk space
+- At least 6 GB hard disk space (for MATLAB installation + toolboxes)
 
 # Performance
 - Processing time: <1 minute for example data
