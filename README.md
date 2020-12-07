@@ -1,5 +1,5 @@
 # LESAProteomics
- Identification and quantification of proteins from LESA-MS data. Read Wiki page for the manual
+ Identification and quantification of proteins from LESA-MS data. Read [Wiki](https://github.com/jorismeurs/LESA_Proteomics/wiki) page for the manual
  
 # System requirements
 - Windows 10
