@@ -215,7 +215,7 @@ classdef quantify
             ylabel('Log intensity');
             
             cd(obj.folder.export);
-            export_fig('MS1_quant','-tif');
+            saveas(gcf,['MS1_Quant' obj.settings.imageFormat]);
             cd(obj.folder.mainFolder);
         end
         
@@ -238,7 +238,7 @@ classdef quantify
             ylabel('Log intensity');
             
             cd(obj.folder.export);
-            export_fig('MS2_quant','-tif');
+            saveas(gcf,['MS2_Quant' obj.settings.imageFormat]);
             cd(obj.folder.mainFolder);
         end
     end
