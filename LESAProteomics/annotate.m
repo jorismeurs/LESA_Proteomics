@@ -53,13 +53,16 @@ classdef annotate
             obj.output.MS1File = fileName(1:extensionIndex-1);
             obj.output.mzXMLFile = [obj.folder.identification '\data\' fileName(1:extensionIndex-1) '.mzXML'];
             if isequal(fileType,'.RAW')
-                scanPeakList = mzxml2peaks(mzxmlread(obj.output.mzXMLFile));
+                scanPeakList = mzxml2peaks(mzxmlread(obj.output.mzXMLFile,'Level',1));
                 bpIntensity = cellfun(@(x) max(x(:,2)),scanPeakList);
                 maxIndex = find(bpIntensity==max(bpIntensity));  
                 obj.output.scanData = cell2mat(scanPeakList(maxIndex,1));
             elseif isequal(fileType,'.mzXML')
-                scanPeakList = cell2mat(mzxml2peaks(mzxmlread(obj.output.mzXMLFile)));
-                obj.output.scanData = mspeaks(scanPeakList(:,1),scanPeakList(:,2));
+                scanPeakList = mzxml2peaks(mzxmlread(obj.output.mzXMLFile,'Level',1));
+                bpIntensity = cellfun(@(x) max(x(:,2)),scanPeakList);
+                maxIndex = find(bpIntensity==max(bpIntensity));  
+                obj.output.scanData = cell2mat(scanPeakList(maxIndex,1));
+                %obj.output.scanData = mspeaks(scanPeakList(:,1),scanPeakList(:,2));
             end
         end
         
