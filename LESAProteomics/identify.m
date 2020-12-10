@@ -245,6 +245,33 @@ classdef identify
             fclose(fileID);
             fclose('all');
         end
+        
+        function obj = identificationList(obj)
+            proteinCount = input('Number of proteins: ');
+            for j = 1:proteinCount
+               proteinName{j,1} = inputdlg('Enter UNIPROT ID:','UNIPROT ID');
+            end
+            TF = [];
+            for j = 1:length(obj.output.libraryID)
+                tempIDs = [];
+                tempIDs = {obj.output.libraryID{j}.protein}';
+                for n = 1:length(proteinName)
+                    if ismember(tempIDs,proteinName{n})
+                        TF(j,n) = true;
+                        break
+                    else
+                        TF(j,n) = false; 
+                    end
+                end
+            end
+            obj.output.identificationList = TF;
+            try
+                xlswrite('ID_list.xlsx','Sheet1','B2',TF);
+            catch
+                warning('No list exported');
+            end
+            %xlswrite('ID_list.xlsx','Sheet1','A2',proteinName');
+        end
     end
     
 end
