@@ -3,12 +3,18 @@
  
 # System requirements
 - Windows 10
-- 2 GB RAM
+- 4 GB RAM
 - MATLAB R2017a
+  + Bioinformatics Toolbox
 - At least 6 GB hard disk space (for MATLAB installation + toolboxes)
+- Java 8 Runtime Environment
 
 # Performance
 - Processing time: <1 minute for example data
+
+# Supported files
+- Thermo .RAW files 
+- Thermo .RAW files converted .mzXML (32-bit; no compression)
 
 # License
 MIT License <br>
