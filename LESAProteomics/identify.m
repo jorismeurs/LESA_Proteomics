@@ -169,15 +169,24 @@ classdef identify
             end
             library = libraryData.library;
             outputFolder = [obj.folder.identification '\library\sample_files'];
-            cd(outputFolder)
-            try
-                delete *.mgf
-            catch
-                warning('Folder is empty');
+            fileUse = questdlg('Use current available files?','MGF Files',...
+                'Yes','No','Yes');
+            switch fileUse
+                case 'No'
+                    cd(outputFolder)
+                    try
+                        delete *.mgf
+                    catch
+                        warning('Folder is empty');
+                    end
+                    cd(obj.folder.mainFolder);
+                    raw2mgf(outputFolder);
+                case 'Yes'
+                    
+                otherwise
+                    warning('No selection. Processing terminated');
+                    return
             end
-            cd(obj.folder.mainFolder);
-            raw2mgf(outputFolder);
-            
             cd(outputFolder)
             mgfFiles = dir('*.mgf');
             sampleFiles = [];
@@ -187,8 +196,13 @@ classdef identify
             cd(obj.folder.mainFolder);
             
             for j = 1:length(sampleFiles)
-               MGFStruct = readMGF(sampleFiles{j});
-               identificationData{j} = scoreCorrelation(obj,MGFStruct,library);
+               try
+                    MGFStruct = readMGF(sampleFiles{j});
+                    identificationData{j} = scoreCorrelation(obj,MGFStruct,library);
+               catch
+                    identificationData{j} = [];
+                    continue
+               end
             end
             obj.output.libraryID = identificationData; 
         end
