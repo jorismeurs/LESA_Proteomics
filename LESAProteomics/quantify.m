@@ -202,22 +202,29 @@ classdef quantify
             obj.output.selectedLibraryPeptides = [];
             for j = 1:length(proteinList)
                YN = input(sprintf('Include %s ? (Y/N) \n',proteinList{j}),'s');
-               if isequal(YN,'Y')  
-                   k = k+1;
+               if isequal(YN,'Y')                    
                    peptideIDX = find(strcmp(allProteinIDs,proteinList{j,1}));
                    disp(peptideIDX)
                    peptides = [];
-                   for j = 1:length(peptideIDX)
-                        peptides = [peptides;cellstr(peptideList{peptideIDX,1})];
-                   end
-                   obj.output.selectedLibraryPeptides(k).protein = proteinList{j,1};
-                   obj.output.selectedLibraryPeptides(k).peptides = peptides;
+                   for n = 1:length(peptideIDX)
+                        k = k+1;
+                        obj.output.selectedLibraryPeptides(k).protein = proteinList{j,1};
+                        obj.output.selectedLibraryPeptides(k).peptides = peptideList{peptideIDX(n),1}; % This should be a cell array
+                        % Retrieve charges per peptide for m/z calculation
+                        % obj.output.selectedLibraryPeptides(k).charge = z; 
+                   end                  
                else
                    continue
                end
             end
-            obj.output.selectLibraryPeptides = selectedProtein;
+            
             % Calculate peptide m/z for all peptides per protein
+            for j = 1:length(obj.output.selectedLibraryPeptides)
+               peptideList = obj.output.selectedLibraryPeptides.peptides;
+               for n = 1:length(peptideList)
+                  [mz,z] = getMZ(peptideList{n,1},charge) 
+               end
+            end
         end
         
         function obj = setGroups(obj)
