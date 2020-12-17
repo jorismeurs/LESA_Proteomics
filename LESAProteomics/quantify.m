@@ -220,10 +220,10 @@ classdef quantify
             
             % Calculate peptide m/z for all peptides per protein
             for j = 1:length(obj.output.selectedLibraryPeptides)
-               peptideList = obj.output.selectedLibraryPeptides.peptides;
-               for n = 1:length(peptideList)
-                  [mz,z] = getMZ(peptideList{n,1},charge) 
-               end
+               peptideSequence = obj.output.selectedLibraryPeptides(j).peptides;
+               charge = obj.output.selectedLibraryPeptides(j).charge;
+               [mz,~] = getMZ(peptideSequence,charge);
+               obj.output.selected
             end
         end
         
