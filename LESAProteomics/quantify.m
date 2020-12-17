@@ -184,6 +184,42 @@ classdef quantify
             end
         end
         
+        function obj = libraryPeptideMS1(obj)
+            
+            cd(obj.folder.library);
+            try
+                libraryData = load('library.mat');
+            catch 
+                error('Library file missing. Run <strong>generateLibraryFile<\strong>');
+            end
+            cd(obj.folder.mainFolder);
+            
+            % Select proteins of interest
+            allProteinIDs = unique({libraryData.library.protein}');
+            proteinList = unique(allProteinIDs);
+            peptideList = {libraryData.library.sequence}';
+            selectedProtein = []; k = 0;
+            obj.output.selectedLibraryPeptides = [];
+            for j = 1:length(proteinList)
+               YN = input(sprintf('Include %s ? (Y/N) \n',proteinList{j}),'s');
+               if isequal(YN,'Y')  
+                   k = k+1;
+                   peptideIDX = find(strcmp(allProteinIDs,proteinList{j,1}));
+                   disp(peptideIDX)
+                   peptides = [];
+                   for j = 1:length(peptideIDX)
+                        peptides = [peptides;cellstr(peptideList{peptideIDX,1})];
+                   end
+                   obj.output.selectedLibraryPeptides(k).protein = proteinList{j,1};
+                   obj.output.selectedLibraryPeptides(k).peptides = peptides;
+               else
+                   continue
+               end
+            end
+            obj.output.selectLibraryPeptides = selectedProtein;
+            % Calculate peptide m/z for all peptides per protein
+        end
+        
         function obj = setGroups(obj)
             reportData = readReport(obj);
             fileList = unique(reportData(2:end,10));
