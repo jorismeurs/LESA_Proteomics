@@ -195,23 +195,22 @@ classdef quantify
             cd(obj.folder.mainFolder);
             
             % Select proteins of interest
-            allProteinIDs = unique({libraryData.library.protein}');
+            allProteinIDs = {libraryData.library.protein}';
             proteinList = unique(allProteinIDs);
             peptideList = {libraryData.library.sequence}';
+            chargeList = {libraryData.library.z}';
             selectedProtein = []; k = 0;
             obj.output.selectedLibraryPeptides = [];
             for j = 1:length(proteinList)
                YN = input(sprintf('Include %s ? (Y/N) \n',proteinList{j}),'s');
                if isequal(YN,'Y')                    
                    peptideIDX = find(strcmp(allProteinIDs,proteinList{j,1}));
-                   disp(peptideIDX)
                    peptides = [];
                    for n = 1:length(peptideIDX)
                         k = k+1;
                         obj.output.selectedLibraryPeptides(k).protein = proteinList{j,1};
-                        obj.output.selectedLibraryPeptides(k).peptides = peptideList{peptideIDX(n),1}; % This should be a cell array
-                        % Retrieve charges per peptide for m/z calculation
-                        % obj.output.selectedLibraryPeptides(k).charge = z; 
+                        obj.output.selectedLibraryPeptides(k).peptides = peptideList{peptideIDX(n),1};
+                        obj.output.selectedLibraryPeptides(k).z = chargeList(peptideIDX(n),1); 
                    end                  
                else
                    continue
@@ -221,9 +220,10 @@ classdef quantify
             % Calculate peptide m/z for all peptides per protein
             for j = 1:length(obj.output.selectedLibraryPeptides)
                peptideSequence = obj.output.selectedLibraryPeptides(j).peptides;
-               charge = obj.output.selectedLibraryPeptides(j).charge;
+               charge = obj.output.selectedLibraryPeptides(j).z;
+               charge = charge{1};
                [mz,~] = getMZ(peptideSequence,charge);
-               obj.output.selected
+               obj.output.selectedLibraryPeptides(j).mz = mz;
             end
         end
         
