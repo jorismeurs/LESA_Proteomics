@@ -135,7 +135,7 @@ classdef quantify
             %--------------------------------------------------------
             
             
-            obj.output.MS1Data.totIonCurrent = [];
+            %obj.output.MS1Data.totIonCurrent = [];
             obj.data.peakList = [];
             for j = 1:length(obj.data.fileLocation)
                msData = mzxml2peaks(mzxmlread(obj.data.fileLocation{j},'Level',1));
@@ -152,7 +152,7 @@ classdef quantify
                interpolatedData = cell2mat(interpolatedData);
                averageSpectrum = mean(interpolatedData,1);
                
-               obj.output.MS1Data.totIonCurrent(j,1) = sum(averageSpectrum);
+               %obj.output.MS1Data.totIonCurrent(j,1) = sum(averageSpectrum);
                tempMZ = CMZ';
                tempInt = averageSpectrum';
                [tempMZ,mzIDX] = unique(tempMZ);
@@ -185,7 +185,7 @@ classdef quantify
         end
         
         function obj = libraryPeptideMS1(obj)
-            
+            obj.output.MS1Data = [];
             cd(obj.folder.library);
             try
                 libraryData = load('library.mat');
@@ -205,6 +205,7 @@ classdef quantify
                YN = input(sprintf('Include %s ? (Y/N) \n',proteinList{j}),'s');
                if isequal(YN,'Y')                    
                    peptideIDX = find(strcmp(allProteinIDs,proteinList{j,1}));
+                   selectedProtein{j,1} = proteinList{j,1};
                    peptides = [];
                    for n = 1:length(peptideIDX)
                         k = k+1;
@@ -224,6 +225,46 @@ classdef quantify
                charge = charge{1};
                [mz,~] = getMZ(peptideSequence,charge);
                obj.output.selectedLibraryPeptides(j).mz = mz;
+            end
+            
+            % Iterate through list and retrieve intensities per protein
+            proteinFields = {obj.output.selectedLibraryPeptides.protein}';
+            
+            for z = 1:length(selectedProtein)                
+                fieldNo = find(strcmp(proteinFields,selectedProtein{z}));   
+                tempIntensity = [];
+                collectIntensity = [];
+                for j = 1:length(fieldNo)
+                    peptideMZ = obj.output.selectedLibraryPeptides(fieldNo(j)).mz;
+                    maxDeviation = ppmDeviation(peptideMZ,obj.settings.MS1Tolerance);
+                    for n = 1:length(obj.data.peakList)
+                        tempList = cell2mat(obj.data.peakList(n,1));
+                        matchIndex = find(tempList(:,1) > peptideMZ-maxDeviation & ...
+                            tempList(:,1) < peptideMZ+maxDeviation);
+                        if ~isempty(matchIndex)
+                            if numel(matchIndex) > 1
+                                diff = abs(peptideMZ-tempList(matchIndex,1));
+                                minimumDifference = find(diff==min(diff));
+                                tempIntensity(n,1) = tempList(matchIndex(minimumDifference),2);
+                            else
+                                tempIntensity(n,1) = tempList(matchIndex,2);
+                            end
+                        else
+                            tempIntensity(n,1) = NaN;
+                            continue
+                        end
+                    end
+                    collectIntensity = [collectIntensity,tempIntensity];
+                end
+                if isequal(obj.settings.quantType,'average')
+                    obj.output.MS1Data(z).proteinAbundance = nanmean(collectIntensity,2);
+                    obj.output.MS1Data(z).protein = selectedProtein{z};
+                elseif isequal(obj.settings.quantType,'sum')
+                    obj.output.MS1Data(z).proteinAbundance = nansum(collectIntensity,2);
+                    obj.output.MS1Data(z).protein = selectedProtein{z};
+                else
+                    error('Quantification setting should be either <strong>average</strong> or <strong>sum</strong>');
+                end
             end
         end
         
