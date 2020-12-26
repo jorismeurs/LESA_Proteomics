@@ -138,28 +138,32 @@ classdef quantify
             %obj.output.MS1Data.totIonCurrent = [];
             obj.data.peakList = [];
             for j = 1:length(obj.data.fileLocation)
-               msData = mzxml2peaks(mzxmlread(obj.data.fileLocation{j},'Level',1));
-               filteredData = [];
-               for n = 1:length(msData)
-                  tempData = cell2mat(msData(n,1));
-                  [mz,idx] = unique(tempData(:,1));
-                  int = tempData(idx,2);
-                  filteredData{n,1} = [mz,int];
+               try
+                   msData = mzxml2peaks(mzxmlread(obj.data.fileLocation{j},'Level',1));
+                   filteredData = [];
+                   for n = 1:length(msData)
+                      tempData = cell2mat(msData(n,1));
+                      [mz,idx] = unique(tempData(:,1));
+                      int = tempData(idx,2);
+                      filteredData{n,1} = [mz,int];
+                   end
+                   interpolatedData = [];
+                   fun  =@(x) interp1(x(:,1),x(:,2),CMZ,'linear');
+                   interpolatedData = cellfun(fun,filteredData,'UniformOutput',false);
+                   interpolatedData = cell2mat(interpolatedData);
+                   averageSpectrum = mean(interpolatedData,1);
+
+                   %obj.output.MS1Data.totIonCurrent(j,1) = sum(averageSpectrum);
+                   tempMZ = CMZ';
+                   tempInt = averageSpectrum';
+                   [tempMZ,mzIDX] = unique(tempMZ);
+                   tempInt = tempInt(mzIDX,1);
+                   obj.data.peakList{j,1} = mspeaks(tempMZ,tempInt,...
+                       'HeightFilter',obj.settings.peakThreshold,...
+                       'Denoising',false);
+               catch
+                   obj.data.peakList{j,1} = [];
                end
-               interpolatedData = [];
-               fun  =@(x) interp1(x(:,1),x(:,2),CMZ,'linear');
-               interpolatedData = cellfun(fun,filteredData,'UniformOutput',false);
-               interpolatedData = cell2mat(interpolatedData);
-               averageSpectrum = mean(interpolatedData,1);
-               
-               %obj.output.MS1Data.totIonCurrent(j,1) = sum(averageSpectrum);
-               tempMZ = CMZ';
-               tempInt = averageSpectrum';
-               [tempMZ,mzIDX] = unique(tempMZ);
-               tempInt = tempInt(mzIDX,1);
-               obj.data.peakList{j,1} = mspeaks(tempMZ,tempInt,...
-                   'HeightFilter',obj.settings.peakThreshold,...
-                   'Denoising',false);
             end 
         end
         
@@ -168,15 +172,19 @@ classdef quantify
             obj.output.MS1Data.peptideIntensity = nan(length(obj.data.fileLocation),1);
             for j = 1:length(obj.data.peakList)
                 tempList = cell2mat(obj.data.peakList(j,1));
-                matchIndex = find(tempList(:,1) > obj.output.peptideMZ-maxDeviation & ...
-                    tempList(:,1) < obj.output.peptideMZ+maxDeviation);
-                if ~isempty(matchIndex)
-                    if numel(matchIndex) > 1
-                        diff = abs(obj.output.peptideMZ-tempList(matchIndex,1));
-                        minimumDifference = find(diff==min(diff));
-                        obj.output.MS1Data.peptideIntensity(j,1) = tempList(matchIndex(minimumDifference),2);
+                if ~isempty(tempList)
+                    matchIndex = find(tempList(:,1) > obj.output.peptideMZ-maxDeviation & ...
+                        tempList(:,1) < obj.output.peptideMZ+maxDeviation);
+                    if ~isempty(matchIndex)
+                        if numel(matchIndex) > 1
+                            diff = abs(obj.output.peptideMZ-tempList(matchIndex,1));
+                            minimumDifference = find(diff==min(diff));
+                            obj.output.MS1Data.peptideIntensity(j,1) = tempList(matchIndex(minimumDifference),2);
+                        else
+                            obj.output.MS1Data.peptideIntensity(j,1) = tempList(matchIndex,2);
+                        end
                     else
-                        obj.output.MS1Data.peptideIntensity(j,1) = tempList(matchIndex,2);
+                        continue
                     end
                 else
                     continue
@@ -239,19 +247,24 @@ classdef quantify
                     maxDeviation = ppmDeviation(peptideMZ,obj.settings.MS1Tolerance);
                     for n = 1:length(obj.data.peakList)
                         tempList = cell2mat(obj.data.peakList(n,1));
-                        matchIndex = find(tempList(:,1) > peptideMZ-maxDeviation & ...
-                            tempList(:,1) < peptideMZ+maxDeviation);
-                        if ~isempty(matchIndex)
-                            if numel(matchIndex) > 1
-                                diff = abs(peptideMZ-tempList(matchIndex,1));
-                                minimumDifference = find(diff==min(diff));
-                                tempIntensity(n,1) = tempList(matchIndex(minimumDifference),2);
+                        if ~isempty(tempList)
+                            matchIndex = find(tempList(:,1) > peptideMZ-maxDeviation & ...
+                                tempList(:,1) < peptideMZ+maxDeviation);
+                            if ~isempty(matchIndex)
+                                if numel(matchIndex) > 1
+                                    diff = abs(peptideMZ-tempList(matchIndex,1));
+                                    minimumDifference = find(diff==min(diff));
+                                    tempIntensity(n,1) = tempList(matchIndex(minimumDifference),2);
+                                else
+                                    tempIntensity(n,1) = tempList(matchIndex,2);
+                                end
                             else
-                                tempIntensity(n,1) = tempList(matchIndex,2);
+                                tempIntensity(n,1) = NaN;
+                                continue
                             end
                         else
-                            tempIntensity(n,1) = NaN;
-                            continue
+                           tempIntensity(n,1) = NaN;
+                           continue 
                         end
                     end
                     collectIntensity = [collectIntensity,tempIntensity];
