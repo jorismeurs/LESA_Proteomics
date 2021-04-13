@@ -338,6 +338,88 @@ classdef quantify
             saveas(gcf,['MS2_Quant' obj.settings.imageFormat]);
             cd(obj.folder.mainFolder);
         end
+        
+        function obj = peptideMassFingerprinting(obj)
+            
+            if isempty(obj.settings.minMZ)
+                obj.settings.minMZ = input('Minimum m/z scan range: ');
+            end
+            if isempty(obj.settings.maxMZ)
+                obj.settings.maxMZ = input('Maximum m/z scan range: ');
+            end
+            binSize = -8e-8;
+            %----------------From Spectral Analysis -----------------
+            CMZ = 1/sqrt(obj.settings.minMZ):binSize:1/sqrt(obj.settings.maxMZ)+binSize;
+            CMZ = ones(size(CMZ))./(CMZ.^2);
+            %-------------------------------------------------------- 
+           
+            % Load exported peptide list generated in mMass
+            [fileName,pathName] = uigetfile('.xlsx');
+            if isequal(fileName,0)
+                disp('No file selected');
+                return
+            end
+            peptideFile = fullfile(pathName,fileName);
+            
+            % Load mzXML files of all samples
+            [fileName,pathName] = uigetfile('.mzXML','MultiSelect','on');
+            if isequal(fileName,0)
+                disp('No file selected');
+                return
+            end
+            mzXMLFiles = fullfile(pathName,fileName);
+            
+            % Get peak list for each file based on set parameters
+            for j = 1:length(mzXMLFiles)
+                scanList = mzxml2peaks(mzxmlread(mzXMLFiles{j},'Level',1));
+                
+                % Generate average MS1 spectrum               
+                interpolatedData = []; averageSpectrum = [];
+                for n = 1:length(scanList)
+                    tempData = cell2mat(scanList(n,1));
+                    [mz,idx] = unique(tempData(:,1));
+                    int = tempData(idx,2);
+                    filteredData{n,1} = [mz,int];
+                end              
+                fun  =@(x) interp1(x(:,1),x(:,2),CMZ,'linear');
+                interpolatedData = cellfun(fun,filteredData,'UniformOutput',false);
+                interpolatedData = cell2mat(interpolatedData);
+                averageSpectrum = mean(interpolatedData,1);
+                
+                peakList{j,1} = mspeaks(CMZ,averageSpectrum,'HeightFilter',obj.settings.peakThreshold);
+            end
+            
+            % Match theoretical m/z values with observed values
+            [~,sheets] = xlsfinfo(peptideFile);
+            for z = 1:numel(sheets)
+                [peptideData,peptideTXT] = xlsread(peptideFile,sheets{z});
+                for j = 1:length(peakList)
+                   tempPeaks = cell2mat(peakList(j,1));
+                   tempPeptideInt = [];
+                   for n = 1:size(peptideData,1)
+                       if tempPeaks(n,1) < obj.settings.minMZ || tempPeaks(n,1) > obj.settings.maxMZ
+                           continue
+                       end
+                       idx = find(tempPeaks(:,1) > peptideData(n,2)-obj.settings.MS1Tolerance & ...
+                           tempPeaks(:,1) < peptideData(n,2)+obj.settings.MS1Tolerance);
+                       if ~isempty(idx)
+                           if numel(idx) > 1
+                               diff = abs(tempPeaks(idx,1)-peptideData(n,2));
+                               min_diff = find(diff==min(diff));
+                               tempPeptideInt = [tempPeptideInt;tempPeaks(idx(min_diff),2)];
+                           else
+                              tempPeptideInt = [tempPeptideInt;tempPeaks(idx,2)]; 
+                           end
+                       else
+                          tempPeptideInt = [tempPeptideInt;0]; 
+                       end                           
+                   end
+                   obj.output.PMF(z).protein(j).FileName = fileName{j};
+                   obj.output.PMF(z).protein(j).proteinAbundance = sum(tempPeptideInt);
+                end
+                
+            end
+        end
     end
     
 end
