@@ -397,9 +397,9 @@ classdef quantify
                    tempPeaks = cell2mat(peakList(j,1));
                    tempPeptideInt = [];
                    for n = 1:size(peptideData,1)
-                       if tempPeaks(n,1) < obj.settings.minMZ || tempPeaks(n,1) > obj.settings.maxMZ
-                           continue
-                       end
+%                        if tempPeaks(n,1) < obj.settings.minMZ || tempPeaks(n,1) > obj.settings.maxMZ
+%                            continue
+%                        end
                        idx = find(tempPeaks(:,1) > peptideData(n,2)-obj.settings.MS1Tolerance & ...
                            tempPeaks(:,1) < peptideData(n,2)+obj.settings.MS1Tolerance);
                        if ~isempty(idx)
