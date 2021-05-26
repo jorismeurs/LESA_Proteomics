@@ -41,7 +41,9 @@ end
 
 % Move .mgf file to data folder
 if isequal(fileExt,'mgf')
-    copyfile(fileLoc,outputFolder)
+    for j = 1:length(fileLoc)
+        copyfile(fileLoc{j},outputFolder)
+    end
 end
 
 noFile = false;
