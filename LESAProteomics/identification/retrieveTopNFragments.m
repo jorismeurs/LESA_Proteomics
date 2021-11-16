@@ -36,9 +36,13 @@ end
 
 try
     intensities = sort(intensities,'descend');
-    topN = intensities(1:obj.settings.topNFragments,1);
+    topN = sum(intensities(1:obj.settings.topNFragments,1));
 catch
-    topN = NaN;
+    try
+        topN = sum(intensities(1:length(intensities)));
+    catch
+        topN = NaN;
+    end
 end
 
 end

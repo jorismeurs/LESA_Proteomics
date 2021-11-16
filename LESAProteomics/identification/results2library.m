@@ -46,6 +46,12 @@ sequenceList = reportData(2:end,3);
 proteinList = reportData(2:end,2);
 mgfList = unique(reportData(2:end,10));
 scanList = reportData(2:end,11);
+for j = 1:length(scanList)
+   idx = strfind(scanList{j},' File'); 
+   if ~isempty(idx)
+      scanList{j,1} = scanList{j,1}(1:idx-1);  
+   end
+end
 precursorCharge = reportData(2:end,15);
 
 % Collect peptide spectra
@@ -59,6 +65,7 @@ for j = 1:length(mgfList)
         scanIndex = find(strcmp(titleList,scanList{n}));
         if ~isempty(scanIndex)
            count = count+1; 
+           disp(count);
            tempLibrary{count,1}  = sequenceList{n};
            tempLibrary{count,2}  = proteinList{n};
            tempLibrary{count,3}  = precursorCharge{n};

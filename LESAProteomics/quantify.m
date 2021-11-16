@@ -34,9 +34,14 @@ classdef quantify
             % Select peptide
             tempSequence = [];
             for j = 1:length(obj.output.libraryID)
-                tempSequence = [tempSequence;{obj.output.libraryID{j}.sequence}'];
+                tempSequence = [tempSequence;cellstr(char(obj.output.libraryID{j}.sequence))];
             end
             tempSequence = unique(tempSequence);
+            idx = find(cellfun(@isempty,tempSequence));
+            if ~isempty(idx)
+                tempSequence(idx,:) = [];
+            end
+            
             clc
             for j = 1:length(tempSequence)
                fprintf('(%d) %s \n',j,tempSequence{j}); 
@@ -49,17 +54,25 @@ classdef quantify
                tempSequence = {obj.output.libraryID{j}.sequence}';
                tempCorr = [obj.output.libraryID{j}.R]';
                matchIndex = find(strcmp(tempSequence,selectedPeptide));
-               maxCorr = find(tempCorr(matchIndex,1)==max(tempCorr(matchIndex,1)));
-               quantIndex = matchIndex(maxCorr);
-               quantSpectrum{j} = obj.output.libraryID{j}(quantIndex).sample;
+               if ~isempty(matchIndex)
+                    maxCorr = find(tempCorr(matchIndex,1)==max(tempCorr(matchIndex,1)));
+                    quantIndex = matchIndex(maxCorr);
+                    quantSpectrum{j} = obj.output.libraryID{j}(quantIndex).sample;
+               else
+                    quantSpectrum{j} = [];
+               end
             end            
             
             % Retrieve top N most intense fragments
             obj.output.topN = [];
             for j = 1:length(quantSpectrum)
                 tempSpectrum = cell2mat(quantSpectrum(j));
-                [y,b] = fragmentSequence(selectedPeptide);    
-                obj.output.topN{j} = retrieveTopNFragments(obj,tempSpectrum,b,y);
+                if ~isempty(tempSpectrum)
+                    [y,b] = fragmentSequence(selectedPeptide);    
+                    obj.output.topN{j} = retrieveTopNFragments(obj,tempSpectrum,b,y);
+                else
+                   obj.output.topN{j} = []; 
+                end
             end
         end
         

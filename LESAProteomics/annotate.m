@@ -157,6 +157,36 @@ classdef annotate
            saveas(gcf,[tempSequence{matchIndex,1} '_library' obj.settings.imageFormat]);
            cd(obj.folder.mainFolder);
         end
+        
+        function obj = annotateSpectrum(obj)
+            
+            % Select and parse .mzXML file for annotation  
+            [fileName,pathName] = uigetfile('.mzXML');
+            if isequal(fileName,0)
+                return
+            end
+            fileLoc = fullfile(pathName,fileName);
+            scanPeakList = mzxml2peaks(mzxmlread(fileLoc,'Level',1));
+            bpIntensity = cellfun(@(x) max(x(:,2)),scanPeakList);
+            maxIndex = find(bpIntensity==max(bpIntensity));  
+            obj.output.scanData = cell2mat(scanPeakList(maxIndex,1));
+            
+            cd([obj.folder.identification '/library']);
+            lib = load('library.mat');
+            
+            % Select protein for annotation
+            proteinID = unique({lib.library.protein});
+            proteinList = {lib.library.protein};
+            for j = 1:length(proteinID)
+                fprintf('(%d) %s \n',j,proteinID{j});
+            end
+            proteinNo = input('Select protein for peptide annotation:   ');
+            
+            idx = find(strcmp(proteinList,proteinID{proteinNo}));
+            disp(idx);
+            
+            % Convert amino acid sequence to m/z
+        end
     end
     
 end

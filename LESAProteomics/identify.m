@@ -270,7 +270,7 @@ classdef identify
                 tempIDs = [];
                 tempIDs = {obj.output.libraryID{j}.protein}';
                 for n = 1:length(proteinName)
-                    if ismember(tempIDs,proteinName{n})
+                    if strcmp(tempIDs,proteinName{n})
                         TF(j,n) = true;
                         break
                     else
