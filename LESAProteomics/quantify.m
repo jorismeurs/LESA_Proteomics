@@ -124,11 +124,13 @@ classdef quantify
         
         function obj = getFiles(obj)
             obj.data.fileLocation = [];
+            obj.data.fileName = [];
             [fileName,pathName] = uigetfile('.mzXML','MultiSelect','on');
             if isequal(fileName,0)
                return 
             end
             obj.data.fileLocation = fullfile(pathName,fileName);
+            obj.data.fileName = fileName;
             if ~iscell(obj.data.fileLocation)
                 error('Minimum file input is <strong>2</strong>');
             end 
