@@ -65,7 +65,6 @@ for j = 1:length(mgfList)
         scanIndex = find(strcmp(titleList,scanList{n}));
         if ~isempty(scanIndex)
            count = count+1; 
-           disp(count);
            tempLibrary{count,1}  = sequenceList{n};
            tempLibrary{count,2}  = proteinList{n};
            tempLibrary{count,3}  = precursorCharge{n};
