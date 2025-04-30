@@ -36,8 +36,8 @@ classdef LESAProteomics < visualise & identify & annotate & quantify
             obj.output.file = [];
             obj.output.file.identification = [];
             obj.output.selectedLibraryPeptides = [];
-            obj.settings.PeptideShakerVersion = '1.16.45';
-            obj.settings.SearchGUIVersion = '3.3.20';
+            obj.settings.PeptideShakerVersion = '3.0.11';
+            obj.settings.SearchGUIVersion = '4.3.14';
             obj.settings.reportNumber = '11';
             obj.settings.minPSMScore = 95;
             obj.settings.topNFragments = 3;
